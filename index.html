@@ -16,19 +16,21 @@
             background-color: #080911;
             color: #ffffff;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
         }
 
         /* 1-BOSQICH: LOGIN EKRANI */
         .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 400px;
-            padding: 40px 20px;
+            height: 100vh;
+            background-color: #080911;
             display: flex;
             justify-content: center;
-            align-self: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
         }
 
         .login-card {
@@ -37,6 +39,7 @@
             border-radius: 20px;
             padding: 36px 28px;
             width: 100%;
+            max-width: 400px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
@@ -95,6 +98,7 @@
         .dashboard-screen {
             display: none;
             width: 100%;
+            min-height: 100vh;
             flex-direction: column;
             align-items: center;
             padding-top: 70px;
@@ -401,7 +405,7 @@
             line-height: 1.5;
         }
 
-        /* Bottom Nav - Skrinshotdagi kabi dizayn */
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -440,7 +444,6 @@
             font-size: 18px;
         }
 
-        /* Aktiv element uchun skrinshotdagi dumaloq, bo'rtib chiqqan qism */
         .active-icon-wrapper {
             background: #8b5cf6;
             color: #fff;
@@ -475,7 +478,7 @@
     </div>
 
     <!-- 2-BOSQICH: DASHBOARD -->
-    <div class="dashboard-screen" id="dashboardScreen" style="display: none;">
+    <div class="dashboard-screen" id="dashboardScreen">
         
         <!-- Header -->
         <div class="top-navbar">
@@ -606,10 +609,10 @@
 
         </div>
 
-        <!-- Bottom Navigation (Skrinshotdagi kabi dinamik dizayn) -->
+        <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <button class="nav-item active" onclick="switchTab('tabHome')" id="navHome">
-                <div class="nav-icon-container" id="iconHome">
+                <div class="nav-icon-container active-icon-wrapper" id="iconHome">
                     <span class="nav-icon">🏠</span>
                 </div>
                 <span>Bo'sh sahifa</span>
@@ -621,7 +624,7 @@
                 <span>O'rganish</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabTask')" id="navTask">
-                <div class="nav-icon-container active-icon-wrapper" id="iconTask">
+                <div class="nav-icon-container" id="iconTask">
                     <span class="nav-icon">📝</span>
                 </div>
                 <span>Imtihon</span>
@@ -676,7 +679,6 @@
                 targetTab.classList.add('active-tab');
             }
 
-            // Barcha nav itemlardan active ni olib tashlash va wrapper'larni oddiy holatga keltirish
             const navItems = document.querySelectorAll('.bottom-nav .nav-item');
             navItems.forEach(item => {
                 item.classList.remove('active');
@@ -686,7 +688,6 @@
                 }
             });
 
-            // Tanlangan tabga active klassini va dumaloq dizaynni berish
             let activeNavBtn = document.getElementById('navHome');
             let activeIconContainer = document.getElementById('iconHome');
 
@@ -704,4 +705,59 @@
                 activeIconContainer = document.getElementById('iconReport');
             } else if (tabId === 'tabRating') {
                 activeNavBtn = document.getElementById('navRating');
-                activeIconContainer = document.
+                activeIconContainer = document.getElementById('iconRating');
+            }
+
+            if (activeNavBtn) activeNavBtn.classList.add('active');
+            if (activeIconContainer) activeIconContainer.classList.add('active-icon-wrapper');
+
+            window.scrollTo(0, 0);
+        }
+
+        function loadWord() {
+            if (currentIndex < vocabularyList.length) {
+                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
+                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
+                document.getElementById('userTranslation').value = "";
+                document.getElementById('taskResultMsg').innerText = "";
+            } else {
+                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
+                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
+                document.getElementById('taskResultMsg').style.color = "#34d399";
+            }
+        }
+
+        function checkTranslation() {
+            if (currentIndex >= vocabularyList.length) return;
+
+            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
+            let validAnswers = vocabularyList[currentIndex].uz;
+            let msgEl = document.getElementById('taskResultMsg');
+
+            if (userVal === "") {
+                alert("Iltimos, tarjimani yozing!");
+                return;
+            }
+
+            let isCorrect = validAnswers.includes(userVal);
+
+            if (isCorrect) {
+                msgEl.innerText = "✅ To'g'ri! Barakalla.";
+                msgEl.style.color = "#34d399";
+                learnedCount++;
+                
+                document.getElementById('learnedWordsCountHome').innerText = learnedCount + " ta";
+                document.getElementById('learnedWordsCountLearn').innerText = learnedCount + " ta";
+                document.getElementById('learnedWordsCountTask').innerText = learnedCount + " ta";
+                
+                currentIndex++;
+                setTimeout(loadWord, 1500);
+            } else {
+                msgEl.innerText = "❌ Xato! Qaytadan urinib ko'ring.";
+                msgEl.style.color = "#f87171";
+            }
+        }
+    </script>
+
+</body>
+</html>
