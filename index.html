@@ -706,7 +706,7 @@
                         </div>
                         <div class="target-word" id="currentPromptWord">Education</div>
                         <div class="task-input-group" id="taskInputGroup">
-                            <input type="text" class="task-input" id="userTranslation" placeholder="Tarjimasini yozing...">
+                            <input type="text" class="task-input" id="userTranslation" placeholder="Tarjimasini yozing..." onkeypress="handleKeyPress(event)">
                             <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
                         </div>
                         <div class="task-result" id="taskResultMsg"></div>
@@ -759,7 +759,7 @@
                 </div>
             </div>
 
-            <!-- TAB 6: O'QITUVCHI PANELI (O'quvchilar natijasi va qo'shish) -->
+            <!-- TAB 6: O'QITUVCHI PANELI -->
             <div class="tab-content" id="tabTeacherPanel">
                 <div class="general-card">
                     <h3>👨‍🏫 O'qituvchi Paneli</h3>
@@ -767,7 +767,7 @@
                 </div>
 
                 <div class="general-card">
-                    <h3>➕ Yangi O'quvchi Qo'shish</h3>
+                    <h3>➕ O'quvchilarni qo'shish</h3>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                         <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
                         <input type="text" id="newStudentLogin" placeholder="Login (masalan: mustafo)" class="task-input">
@@ -777,7 +777,7 @@
                 </div>
 
                 <div class="general-card">
-                    <h3>📊 O'quvchilar Natijasi</h3>
+                    <h3>📊 O'quvchilar natijasi</h3>
                     <p>Har bir o'quvchining kitoblar bo'yicha ko'rsatkichlari:</p>
                 </div>
 
@@ -968,6 +968,7 @@
 
         function loadAdminTable() {
             let tbody = document.getElementById('adminTableBody');
+            if(!tbody) return;
             tbody.innerHTML = '';
             for (let id in studentsDB) {
                 let st = studentsDB[id];
@@ -991,20 +992,36 @@
             let totalWords = st.book1 + st.book2;
             let percent = st.totalAttempts > 0 ? Math.round((st.totalCorrect / st.totalAttempts) * 100) : 0;
 
-            document.getElementById('headerXp').innerText = "⚡ " + st.xp + " XP";
-            document.getElementById('learnedWordsCountHome').innerText = totalWords + " ta";
-            document.getElementById('learnedWordsCountLearn').innerText = totalWords + " ta";
-            document.getElementById('learnedWordsCountTask').innerText = totalWords + " ta";
-            document.getElementById('knowledgePercent').innerText = percent + "%";
-            document.getElementById('knowledgePercentTask').innerText = percent + "%";
-            document.getElementById('reportWords').innerText = totalWords + " ta";
-            document.getElementById('reportPercent').innerText = percent + "%";
+            let xpEl = document.getElementById('headerXp');
+            if(xpEl) xpEl.innerText = "⚡ " + st.xp + " XP";
+            
+            let hHome = document.getElementById('learnedWordsCountHome');
+            if(hHome) hHome.innerText = totalWords + " ta";
+
+            let hLearn = document.getElementById('learnedWordsCountLearn');
+            if(hLearn) hLearn.innerText = totalWords + " ta";
+
+            let hTask = document.getElementById('learnedWordsCountTask');
+            if(hTask) hTask.innerText = totalWords + " ta";
+
+            let kp = document.getElementById('knowledgePercent');
+            if(kp) kp.innerText = percent + "%";
+
+            let kpt = document.getElementById('knowledgePercentTask');
+            if(kpt) kpt.innerText = percent + "%";
+
+            let rw = document.getElementById('reportWords');
+            if(rw) rw.innerText = totalWords + " ta";
+
+            let rp = document.getElementById('reportPercent');
+            if(rp) rp.innerText = percent + "%";
 
             updateLeaderboard();
         }
 
         function updateLeaderboard() {
             let list = document.getElementById('leaderboardList');
+            if(!list) return;
             list.innerHTML = '';
 
             let sortedStudents = Object.values(studentsDB).sort((a, b) => b.xp - a.xp);
@@ -1125,6 +1142,12 @@
                     </div>
                 `;
                 document.getElementById('taskResultMsg').innerHTML = resultHTML;
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkTranslation();
             }
         }
 
