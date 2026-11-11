@@ -31,47 +31,48 @@
             align-items: center;
             z-index: 1000;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .login-card {
             background: #121526;
             border: 1px solid #20253e;
             border-radius: 20px;
-            padding: 36px 28px;
+            padding: 30px 24px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
 
         .login-card h2 {
             color: #ffffff;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.35;
         }
 
         .login-card p {
             color: #8b9bb4;
-            font-size: 13px;
-            margin-bottom: 28px;
+            font-size: 12px;
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             text-align: left;
             position: relative;
         }
 
         .form-group input {
             width: 100%;
-            padding: 14px 45px 14px 18px; /* Ko'zcha uchun o'ng tomondan joy tashlandi */
+            padding: 12px 45px 12px 14px;
             background: #090b16;
             border: 1px solid #232943;
             color: #fff;
-            border-radius: 12px;
-            font-size: 14px;
+            border-radius: 10px;
+            font-size: 13px;
             outline: none;
             transition: all 0.2s;
         }
@@ -81,10 +82,9 @@
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
         }
 
-        /* Parolni ko'rsatish/yashirish ko'zchasi */
         .toggle-password {
             position: absolute;
-            right: 15px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -96,16 +96,33 @@
 
         .btn-submit {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
-            margin-top: 10px;
+            margin-top: 5px;
+        }
+
+        .divider {
+            margin: 18px 0;
+            border-top: 1px solid #20253e;
+            position: relative;
+        }
+
+        .divider span {
+            position: absolute;
+            top: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #121526;
+            padding: 0 10px;
+            font-size: 11px;
+            color: #64748b;
         }
 
         /* 2. O'QUVCHI DASHBOARD */
@@ -614,7 +631,21 @@
                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">👁️</button>
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">Admin: <b>ukarimov</b> / <b>admin2026</b><br>O'quvchi testi: <b>ali</b> / <b>1234</b></p>
+
+            <div class="divider"><span>Yoki yangi o'quvchimisiz?</span></div>
+
+            <!-- O'quvchi o'zini o'zi ro'yxatdan o'tkazishi uchun panel -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" id="selfStudentName" placeholder="Ism-familiyangiz" class="task-input" style="font-size: 12px; padding: 10px;">
+                <input type="text" id="selfStudentLogin" placeholder="O'zingizga login o'ylab toping" class="task-input" style="font-size: 12px; padding: 10px;">
+                <div style="position: relative;">
+                    <input type="password" id="selfStudentPass" placeholder="Parol o'ylab toping" class="task-input" style="font-size: 12px; padding: 10px 35px 10px 10px; width: 100%;">
+                    <button type="button" class="toggle-password" onclick="toggleSelfPasswordVisibility()" style="font-size: 14px; right: 10px;">👁️</button>
+                </div>
+                <button type="button" class="btn-outline" onclick="registerSelfStudent()" style="padding: 10px; font-size: 12px;">O'quvchi sifatida ro'yxatdan o'tish</button>
+            </div>
+
+            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">Admin: <b>ukarimov</b> / <b>admin2026</b></p>
         </div>
     </div>
 
@@ -631,8 +662,8 @@
                 <h3>➕ Yangi O'quvchi Qo'shish</h3>
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                     <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
-                    <input type="text" id="newStudentLogin" placeholder="Login (masalan: 324)" class="task-input">
-                    <input type="text" id="newStudentPass" placeholder="Parol (masalan: 1234)" class="task-input">
+                    <input type="text" id="newStudentLogin" placeholder="Login (masalan: mustafo)" class="task-input">
+                    <input type="text" id="newStudentPass" placeholder="Parol (masalan: mustafo2003)" class="task-input">
                     <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
                 </div>
             </div>
@@ -888,16 +919,52 @@
             localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
         }
 
-        // Parolni ko'rsatish / yashirish funksiyasi
         function togglePasswordVisibility() {
             let passInput = document.getElementById('password');
-            if (passInput.type === "password") {
-                passInput.type = "text";
-            } else {
-                passInput.type = "password";
-            }
+            passInput.type = (passInput.type === "password") ? "text" : "password";
         }
 
+        function toggleSelfPasswordVisibility() {
+            let passInput = document.getElementById('selfStudentPass');
+            passInput.type = (passInput.type === "password") ? "text" : "password";
+        }
+
+        // O'quvchi o'zini o'zi ro'yxatdan o'tkazishi
+        function registerSelfStudent() {
+            let name = document.getElementById('selfStudentName').value.trim();
+            let login = document.getElementById('selfStudentLogin').value.trim().toLowerCase();
+            let pass = document.getElementById('selfStudentPass').value.trim();
+
+            if (!name || !login || !pass) {
+                alert("Iltimos, ism, login va parolni kiriting!");
+                return;
+            }
+
+            if (studentsDB[login]) {
+                alert("Bu login band! Boshqa login tanlang.");
+                return;
+            }
+
+            studentsDB[login] = {
+                name: name,
+                pass: pass,
+                book1: 0,
+                book2: 0,
+                xp: 0,
+                totalCorrect: 0,
+                totalAttempts: 0
+            };
+
+            saveDB();
+            alert("Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi kirish bo'limidan kiring.");
+            
+            document.getElementById('selfStudentName').value = '';
+            document.getElementById('selfStudentLogin').value = '';
+            document.getElementById('selfStudentPass').value = '';
+            document.getElementById('phone').value = login;
+        }
+
+        // Admin qo'shishi
         function addNewStudent() {
             let name = document.getElementById('newStudentName').value.trim();
             let login = document.getElementById('newStudentLogin').value.trim().toLowerCase();
@@ -949,7 +1016,7 @@
             }
 
             if (!studentsDB[loginInput]) {
-                alert("Bunday o'quvchi topilmadi! Iltimos, o'qituvchingizdan login oling.");
+                alert("Bunday o'quvchi topilmadi! Iltimos, pastdan ro'yxatdan o'ting.");
                 return;
             }
 
