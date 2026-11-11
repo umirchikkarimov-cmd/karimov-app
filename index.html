@@ -1020,11 +1020,11 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v13'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v14'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v13')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v14')) || {
             1: { 1: [
                 { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
                 { en: "attack", uz: ["hujum qilmoq"] }, { en: "bottom", uz: ["tubi"] }, { en: "clever", uz: ["aqlli"] }, { en: "cruel", uz: ["shafqatsiz"] },
@@ -1035,7 +1035,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v13')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v14')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1051,15 +1051,15 @@
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v13', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v14', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v13', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v14', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v13', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v14', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1236,7 +1236,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v13')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v14')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }, { en: "education", uz: ["ta'lim"] }];
@@ -1258,7 +1258,6 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // Aralash rejim: 50% hollarda UZ berilib EN so'raladi, 50% hollarda EN berilib UZ so'raladi
                 currentQuestionType = (Math.random() < 0.5) ? 'uz2en' : 'en2uz';
                 let wordObj = currentActiveWords[currentIndex];
                 let promptText = "";
@@ -1356,7 +1355,7 @@
             }
         }
 
-        // --- KUCHAYTIRILGAN VA ANIQ AI WRITING VA IMLO TAHLILI ---
+        // --- MUKAMMAL VA ANIQ AI WRITING VA IMZO TAHLILI ---
         function loadStudentAssignments() {
             let container = document.getElementById('studentAssignmentsList');
             if (!container) return;
@@ -1403,7 +1402,8 @@
             }
 
             let sentences = textVal.split(/[.!?]+/).filter(s => s.trim().length > 0);
-            let wordCount = textVal.split(/\s+/).length;
+            let wordList = textVal.split(/\s+/).filter(w => w.length > 0);
+            let wordCount = wordList.length;
             
             let errorsFound = [];
             let warningsFound = [];
@@ -1414,44 +1414,50 @@
                 errorsFound.push("❌ Grammatik xato: 'I' olmoshi har doim **katta harf** bilan yozilishi shart (masalan: 'i' o'rniga **'I'**).");
             }
 
-            // 2. Imlo va ataylab buzib yozilgan so'zlarni aniqlash (studen, frend va h.k.)
+            // 2. Imlo xatolari va harflar buzilgan so'zlarni qattiq tekshirish (studint, yeers, faour, block va h.k.)
             let lowerText = textVal.toLowerCase();
-            if (lowerText.includes("studen")) {
-                errorsFound.push("❌ Imlo xatosi: 'studen' so'zida harf tushib qolgan. To'g'ri yozilishi: **'student'**.");
+            
+            if (lowerText.includes("studint") || lowerText.includes("studen")) {
+                errorsFound.push("❌ Imlo xatosi: 'studint' / 'studen' so'zi xato yozilgan. To'g'ri yozilishi: **'student'**.");
+            }
+            if (lowerText.includes("yeers") || lowerText.includes("yer")) {
+                errorsFound.push("❌ Imlo xatosi: 'yeers' so'zida harf xatosi bor. To'g'ri yozilishi: **'years'**.");
+            }
+            if (lowerText.includes("faour") || lowerText.includes("favoure")) {
+                errorsFound.push("❌ Imlo xatosi: 'faour' so'zida harflar tushib qolgan. To'g'ri yozilishi: **'favourite'** (yoki Amerikacha **'favorite'**).");
             }
             if (lowerText.includes("frend")) {
-                errorsFound.push("❌ Imlo xatosi: 'frend' so'zi noto'g'ri yozilgan. To'g'ri yozilishi: **'friend'**.");
+                errorsFound.push("❌ Imlo xatosi: 'frend' so'zi xato yozilgan. To'g'ri yozilishi: **'friend'**.");
             }
 
-            // 3. Grammatik tuzilish, bog'lovchi fe'l va artikl xatolari
-            if (lowerText.includes("i is") || lowerText.includes("he am") || lowerText.includes("she are")) {
-                errorsFound.push("❌ Grammatik tuzilish xatosi: Ega va kesim moslashuvida xato bor (masalan: 'I is' o'rniga **'I am'** bo'lishi kerak).");
+            // 3. Grammatik tuzilish, ega-kesim moslashuvi va artikl xatolari
+            if (lowerText.includes("i are") || lowerText.includes("i is") || lowerText.includes("he am") || lowerText.includes("she are")) {
+                errorsFound.push("❌ Grammatik tuzilish xatosi: Ega va kesim moslashuvida xato bor (masalan: 'I are' yoki 'I is' o'rniga **'I am'** bo'lishi kerak).");
             }
 
-            if (lowerText.includes("a 12 years old") || lowerText.includes("a 13 years old") || lowerText.includes("a years old")) {
-                errorsFound.push("❌ Grammatik xato: Yoshni bildirganda 'a' artikli ishlatilmaydi (masalan: **'I am 12 years old'**).");
-            } else if (lowerText.includes("year old") && !lowerText.includes("years old")) {
-                errorsFound.push("❌ Grammatik xato: Yoshni bildirishda 'years old' ishlatiladi ('year old' xato).");
+            if (lowerText.includes("a 15 years old") || lowerText.includes("a 12 years old") || lowerText.includes("a years old")) {
+                errorsFound.push("❌ Grammatik xato: Yoshni bildirganda 'a' artikli ishlatilmaydi (masalan: **'I am 15 years old'**).");
             }
 
-            // 4. Kontekst va ma'nosiz so'zlarni qattiq tekshirish (masalan: sokin, slow)
-            if (lowerText.includes("sokin") || lowerText.includes("is sokin")) {
-                warningsFound.push("⚠️ Mantiqiy va ma'no xatosi: 'sokin' so'zi o'zbekcha bo'lib qolgan yoki kitob/film mavzusiga mos kelmaydi. Kitob uchun **'interesting'** (qiziqarli) yoki **'exciting'** so'zlarini ishlating.");
+            // 4. Kontekst va so'z o'rinlari tahlili (masalan: kitob/kino mavzusida "color is block" kabi noto'g'ri qo'llanilishlar)
+            if (lowerText.includes("color is block") || lowerText.includes("colour is block")) {
+                warningsFound.push("⚠️ Kontekst va ma'no xatosi: 'color is block' iborasi mavzuga (sevimli kitob yoki kino) mutlaqo mos kelmaydi yoki so'z xato ishlatilgan (masalan: **'black'** o'rniga boshqa narsa nazarda tutilgan bo'lishi mumkin).");
             }
             if (lowerText.includes("is slow") || lowerText.includes("book slow")) {
-                warningsFound.push("⚠️ Ma'no va kontekst xatosi: 'slow' so'zi kitobga nisbatan noto'g'ri qo'llanilgan. Uni **'interesting'** yoki **'wonderful'** so'ziga o'zgartiring.");
+                warningsFound.push("⚠️ Kontekst va ma'no xatosi: 'slow' so'zi kitobga nisbatan mantiqan to'g'ri kelmaydi. Uni **'interesting'** (qiziqarli) yoki **'exciting'** so'ziga o'zgartiring.");
             }
 
             // 5. Gaplar soni bo'yicha talab
             if (sentences.length < 3) {
-                warningsFound.push(`⚠️ Hajm bo'yicha ogohlantirish: Mavzuda kamida 3 ta to'liq gap yozish talab etilgan edi (Sizda ${sentences.length} ta gap mavjud).`);
+                warningsFound.push(`⚠️ Hajm bo'yicha ogohlantirish: Mavzuda kamida 3 ta to'liq gap yozish talab etilgan edi.`);
             }
 
-            let feedbackHtml = "";
+            let feedbackHtml = `📌 **Statistika:** Jami **${wordCount} ta so'z** va **${sentences.length} ta gap** yozildi.<br><br>`;
+            
             if (errorsFound.length === 0 && warningsFound.length === 0) {
-                feedbackHtml = `<span style="color:#34d399;"><b>Ajoyib!</b> Jami ${sentences.length} ta gap va ${wordCount} ta so'z yozildi. Grammatik va ma'no jihatidan jiddiy xatolar topilmadi. Gaplar mazmuni ravon yozilgan! 🌟</span>`;
+                feedbackHtml += `<span style="color:#34d399;"><b>Ajoyib!</b> Grammatik va ma'no jihatidan jiddiy xatolar topilmadi. Matn ravon va to'g'ri yozilgan! 🌟</span>`;
             } else {
-                feedbackHtml = `<b style="color:#f87171;">Aniqlangan xatolar va tavsiyalar:</b><br><ul style="margin-left: 15px; margin-top: 6px; display:flex; flex-direction:column; gap:4px;">`;
+                feedbackHtml += `<b style="color:#f87171;">Aniqlangan xatolar va tavsiyalar:</b><br><ul style="margin-left: 15px; margin-top: 6px; display:flex; flex-direction:column; gap:4px;">`;
                 errorsFound.forEach(err => {
                     feedbackHtml += `<li style="color:#f87171;">${err}</li>`;
                 });
@@ -1498,7 +1504,7 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v13'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v14'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1528,7 +1534,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v13'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v14'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
