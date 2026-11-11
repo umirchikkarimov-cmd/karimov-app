@@ -107,7 +107,7 @@
             margin-top: 10px;
         }
 
-        /* 2. DASHBOARD (Barcha uchun umumiy) */
+        /* 2. DASHBOARD */
         .dashboard-screen {
             display: none;
             width: 100%;
@@ -599,7 +599,7 @@
         </div>
     </div>
 
-    <!-- 2. DASHBOARD (O'quvchi va O'qituvchi uchun umumiy) -->
+    <!-- 2. DASHBOARD -->
     <div class="dashboard-screen" id="dashboardScreen">
         
         <!-- Header -->
@@ -759,7 +759,7 @@
                 </div>
             </div>
 
-            <!-- TAB 6: O'QITUVCHI BOSHQARUV PANELI (Faqat O'qituvchiga ko'rinadi) -->
+            <!-- TAB 6: O'QITUVCHI BOSHQARUV PANELI -->
             <div class="tab-content" id="tabTeacherPanel">
                 <div class="general-card">
                     <h3>👨‍🏫 O'qituvchi Boshqaruv Paneli</h3>
@@ -777,7 +777,8 @@
                 </div>
 
                 <div class="general-card">
-                    <h3>📊 O'quvchilar Statistikasi</h3>
+                    <h3>📊 O'quvchilar Natijasi</h3>
+                    <p>Har bir o'quvchining kitoblar bo'yicha ko'rsatkichlari:</p>
                 </div>
 
                 <table class="admin-table">
@@ -835,7 +836,7 @@
                 <div class="nav-icon-container" id="iconTeacherTab">
                     <span class="nav-icon">👨‍🏫</span>
                 </div>
-                <span>Boshqaruv</span>
+                <span>Natijalar</span>
             </button>
         </div>
 
@@ -922,7 +923,7 @@
 
             // O'qituvchi admin tekshiruvi
             if (loginInput === "ukarimov" && passInput === "admin2026") {
-                currentStudentId = "ukarimov";
+                currentStudentId = "ukarimov_admin";
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('dashboardScreen').style.display = 'flex';
                 document.getElementById('currentStudentName').innerText = "U.Karimov (O'qituvchi)";
@@ -984,8 +985,9 @@
         }
 
         function updateStudentUI() {
-            if (!currentStudentId || currentStudentId === 'ukarimov') return;
+            if (!currentStudentId || currentStudentId === 'ukarimov_admin') return;
             let st = studentsDB[currentStudentId];
+            if (!st) return;
             let totalWords = st.book1 + st.book2;
             let percent = st.totalAttempts > 0 ? Math.round((st.totalCorrect / st.totalAttempts) * 100) : 0;
 
@@ -1127,7 +1129,7 @@
         }
 
         function checkTranslation() {
-            if (currentIndex >= currentActiveWords.length || currentStudentId === 'ukarimov') return;
+            if (currentIndex >= currentActiveWords.length || currentStudentId === 'ukarimov_admin') return;
 
             let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
             let wordObj = currentActiveWords[currentIndex];
@@ -1146,6 +1148,7 @@
             }
 
             let st = studentsDB[currentStudentId];
+            if (!st) return;
             st.totalAttempts++;
 
             if (isCorrect) {
