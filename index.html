@@ -536,7 +536,7 @@
             border-top: 1px solid #1c2138;
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
             z-index: 100;
         }
@@ -550,7 +550,7 @@
             font-size: 10px;
             text-decoration: none;
             font-weight: 600;
-            width: 52px;
+            width: 50px;
             cursor: pointer;
             background: none;
             border: none;
@@ -759,15 +759,11 @@
                 </div>
             </div>
 
-            <!-- TAB 6: O'QITUVCHI PANELI -->
-            <div class="tab-content" id="tabTeacherPanel">
-                <div class="general-card">
-                    <h3>👨‍🏫 O'qituvchi Paneli</h3>
-                    <p>Yangi o'quvchi qo'shish va ularning natijalarini kuzatish:</p>
-                </div>
-
+            <!-- TAB 6: O'QUVCHI QO'SHISH (Faqat O'qituvchiga) -->
+            <div class="tab-content" id="tabAddStudent">
                 <div class="general-card">
                     <h3>➕ O'quvchilarni qo'shish</h3>
+                    <p>Yangi o'quvchi ma'lumotlarini kiriting:</p>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                         <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
                         <input type="text" id="newStudentLogin" placeholder="Login (masalan: mustafo)" class="task-input">
@@ -775,7 +771,10 @@
                         <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
                     </div>
                 </div>
+            </div>
 
+            <!-- TAB 7: NATIJALAR (O'quvchilar natijasi) -->
+            <div class="tab-content" id="tabResults">
                 <div class="general-card">
                     <h3>📊 O'quvchilar natijasi</h3>
                     <p>Har bir o'quvchining kitoblar bo'yicha ko'rsatkichlari:</p>
@@ -831,9 +830,15 @@
                 </div>
                 <span>Reyting</span>
             </button>
-            <!-- Faqat O'qituvchiga ko'rinadigan tugma -->
-            <button class="nav-item" onclick="switchTab('tabTeacherPanel')" id="navTeacherTab" style="display: none;">
-                <div class="nav-icon-container" id="iconTeacherTab">
+            <!-- Faqat O'qituvchiga ko'rinadigan tugmalar -->
+            <button class="nav-item" onclick="switchTab('tabAddStudent')" id="navAddStudentTab" style="display: none;">
+                <div class="nav-icon-container" id="iconAddStudentTab">
+                    <span class="nav-icon">➕</span>
+                </div>
+                <span>Qo'shish</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('tabResults')" id="navResultsTab" style="display: none;">
+                <div class="nav-icon-container" id="iconResultsTab">
                     <span class="nav-icon">👨‍🏫</span>
                 </div>
                 <span>Natijalar</span>
@@ -929,8 +934,9 @@
                 document.getElementById('currentStudentName').innerText = "U.Karimov (O'qituvchi)";
                 document.getElementById('userRolePill').innerText = "O'qituvchi";
                 document.getElementById('headerXp').style.display = 'none';
-                document.getElementById('navTeacherTab').style.display = 'flex';
-                switchTab('tabTeacherPanel');
+                document.getElementById('navAddStudentTab').style.display = 'flex';
+                document.getElementById('navResultsTab').style.display = 'flex';
+                switchTab('tabResults');
                 loadAdminTable();
                 return;
             }
@@ -952,7 +958,8 @@
             document.getElementById('currentStudentName').innerText = studentsDB[currentStudentId].name;
             document.getElementById('userRolePill').innerText = "O'quvchi";
             document.getElementById('headerXp').style.display = 'block';
-            document.getElementById('navTeacherTab').style.display = 'none';
+            document.getElementById('navAddStudentTab').style.display = 'none';
+            document.getElementById('navResultsTab').style.display = 'none';
             updateStudentUI();
             switchTab('tabHome');
             window.scrollTo(0, 0);
@@ -1074,9 +1081,12 @@
                 activeNavBtn = document.getElementById('navRating');
                 activeIconContainer = document.getElementById('iconRating');
                 updateLeaderboard();
-            } else if (tabId === 'tabTeacherPanel') {
-                activeNavBtn = document.getElementById('navTeacherTab');
-                activeIconContainer = document.getElementById('iconTeacherTab');
+            } else if (tabId === 'tabAddStudent') {
+                activeNavBtn = document.getElementById('navAddStudentTab');
+                activeIconContainer = document.getElementById('iconAddStudentTab');
+            } else if (tabId === 'tabResults') {
+                activeNavBtn = document.getElementById('navResultsTab');
+                activeIconContainer = document.getElementById('iconResultsTab');
                 loadAdminTable();
             }
 
@@ -1152,7 +1162,13 @@
         }
 
         function checkTranslation() {
-            if (currentIndex >= currentActiveWords.length || currentStudentId === 'ukarimov_admin') return;
+            if (currentIndex >= currentActiveWords.length) return;
+
+            // Agar o'qituvchi o'zi imtihon topshirmoqchi bo'lmasa, lekin agar kirsachi - xavfsizlik uchun tekshiruv
+            if (!currentStudentId || currentStudentId === 'ukarimov_admin') {
+                alert("O'qituvchi hisobidan imtihon topshirib bo'lmaydi. Iltimos, o'quvchi sifatida kiring.");
+                return;
+            }
 
             let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
             let wordObj = currentActiveWords[currentIndex];
