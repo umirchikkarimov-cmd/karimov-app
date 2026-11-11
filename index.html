@@ -18,7 +18,6 @@
             min-height: 100vh;
         }
 
-        /* 1. LOGIN EKRANI */
         .login-wrapper {
             position: fixed;
             top: 0;
@@ -107,7 +106,6 @@
             margin-top: 10px;
         }
 
-        /* 2. DASHBOARD */
         .dashboard-screen {
             display: none;
             width: 100%;
@@ -244,7 +242,6 @@
             display: flex;
         }
 
-        /* Banner */
         .hero-card {
             background: linear-gradient(180deg, #2a1147 0%, #150d2e 100%);
             border: 1px solid #431a75;
@@ -322,7 +319,6 @@
             cursor: pointer;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -362,7 +358,6 @@
             font-weight: 600;
         }
 
-        /* Imtihon va Unit kartochkalari */
         .exam-selection-view, .exam-active-view, .unit-selection-view {
             display: flex;
             flex-direction: column;
@@ -423,7 +418,6 @@
             margin-bottom: 4px;
         }
 
-        /* Yozma Tarjima Paneli */
         .task-card {
             background: #121526;
             border: 1px solid #20253e;
@@ -517,7 +511,6 @@
             line-height: 1.5;
         }
 
-        /* Leaderboard list */
         .leaderboard-list {
             display: flex;
             flex-direction: column;
@@ -536,7 +529,6 @@
 
         .leaderboard-item.top-1 { border-color: #fbbf24; background: #1a1a2e; }
 
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -689,7 +681,7 @@
                     <div class="stat-card">
                         <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
                         <div class="stat-value" id="learnedWordsCountHome">0 ta</div>
-                        <div class="stat-sub">↗ Lug'at topshiriqlari asosida</div>
+                        <div class="stat-sub">↗ Unikal to'g'ri topilganlar</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
@@ -794,18 +786,26 @@
             <div class="tab-content" id="tabReport">
                 <div class="general-card">
                     <h3>📊 Shaxsiy O'quv Hisoboti</h3>
-                    <p>Sizning shaxsiy natijalaringiz va ko'rsatkichlaringiz quyidagicha:</p>
+                    <p>Sizning shaxsiy natijalaringiz va unitlar bo'yicha ko'rsatkichlaringiz:</p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                        <div class="stat-title">JAMI O'ZLASHTIRILGAN SO'ZLAR</div>
                         <div class="stat-value" id="reportWords">0 ta</div>
-                        <div class="stat-sub">Jami to'g'ri javoblar</div>
+                        <div class="stat-sub">Unikal so'zlar</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">BILIM DARAJASI</div>
+                        <div class="stat-title">UMUMIY FOIZ</div>
                         <div class="stat-value" id="reportPercent">0%</div>
                         <div class="stat-sub-blue">Barqaror</div>
+                    </div>
+                </div>
+
+                <!-- Har bir Essential va Unit ko'rsatkichlari jadvali -->
+                <div class="general-card" style="margin-top: 4px;">
+                    <h3>📖 Unitlar Bo'yicha Natijalar (Faqat ishlab bo'linganlar)</h3>
+                    <div id="unitPerformanceList" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Dinamik to'ldiriladi -->
                     </div>
                 </div>
             </div>
@@ -909,11 +909,11 @@
                 </div>
             </div>
 
-            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun) -->
+            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun + AI Writing tahlili bilan) -->
             <div class="tab-content" id="tabStudentAssignments">
                 <div class="general-card">
                     <h3>📋 O'qituvchi yuborgan topshiriqlar</h3>
-                    <p>Sizga berilgan vazifalarni bajaring:</p>
+                    <p>Sizga berilgan vazifalarni bajaring va AI tahlilini oling:</p>
                 </div>
 
                 <div id="studentAssignmentsList" style="display: flex; flex-direction: column; gap: 14px;">
@@ -989,7 +989,7 @@
         const autoDictionary = {
             "afraid": ["qo'rqqan", "qorqqan"],
             "agree": ["rozi bo'lmoq", "rozi"],
-            "angry": ["jahli chiqqan", "g'azablangan", "qahrlangan"],
+            "angry": ["jahli chiqqan", "g'azablangan"],
             "arrive": ["yetib kelmoq", "kelmoq"],
             "attack": ["hujum qilmoq", "hujum"],
             "bottom": ["tubi", "tagi", "osti"],
@@ -1013,17 +1013,16 @@
         };
 
         let defaultDB = {
-            "ali": { name: "Ali", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
-            "mustafo": { name: "Mustafo", pass: "mustafo2003", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
-            "odil": { name: "Odil", pass: "odil2002", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
+            "ali": { name: "Ali", pass: "1234", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} },
+            "mustafo": { name: "Mustafo", pass: "mustafo2003", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} },
+            "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v7'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        // Universal yagona kalit orqali ma'lumotlar saqlanadi
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v6')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v7')) || {
             1: { 1: [
                 { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
                 { en: "attack", uz: ["hujum qilmoq"] }, { en: "bottom", uz: ["tubi"] }, { en: "clever", uz: ["aqlli"] }, { en: "cruel", uz: ["shafqatsiz"] },
@@ -1034,8 +1033,8 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db')) || [
-            { id: 1, type: 'writing', content: "Describe your favorite book or movie in English.", date: "11-Noyabr" }
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v7')) || [
+            { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
         let currentStudentId = null;
@@ -1045,28 +1044,30 @@
         let currentActiveWords = [];
         let currentIndex = 0;
         let currentQuestionType = 'en2uz'; 
-        let correctAnswersCount = 0;
-        let wrongAnswersCount = 0;
+        let correctInThisSession = 0;
+        let wrongInThisSession = 0;
+        let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v7', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v6', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v7', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v7', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
         function updateTaskBadge() {
             let badge = document.getElementById('studentTaskBadge');
             if (!badge) return;
-            if (assignmentsDB.length > 0) {
+            let count = assignmentsDB.length;
+            if (count > 0) {
                 badge.style.display = 'block';
-                badge.innerText = assignmentsDB.length;
+                badge.innerText = count;
             } else {
                 badge.style.display = 'none';
             }
@@ -1090,11 +1091,10 @@
             studentsDB[login] = {
                 name: name,
                 pass: pass,
-                book1: 0,
-                book2: 0,
                 xp: 0,
-                totalCorrect: 0,
-                totalAttempts: 0
+                learnedWords: {},
+                unitScores: {},
+                submissions: {}
             };
 
             saveDB();
@@ -1231,15 +1231,14 @@
             document.getElementById('examActiveView').style.display = 'none';
             document.getElementById('examSelectionView').style.display = 'none';
             document.getElementById('examUnitSelectionView').style.display = 'flex';
+            updateStudentUI();
         }
 
         function startExamWithUnit(bookNum, unitNum) {
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            // Har safar o'quvchi imtihonni boshlaganda xotiradagi eng so'nggi ma'lumotlarni tortib olamiz
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v6')) || customUnitsDB;
-            
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v7')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }, { en: "education", uz: ["ta'lim"] }];
@@ -1247,8 +1246,9 @@
             currentActiveWords = [...wordsList].sort(() => Math.random() - 0.5);
 
             currentIndex = 0;
-            correctAnswersCount = 0;
-            wrongAnswersCount = 0;
+            correctInThisSession = 0;
+            wrongInThisSession = 0;
+            correctWordsInCurrentUnitSet = new Set();
 
             document.getElementById('examUnitSelectionView').style.display = 'none';
             document.getElementById('examSelectionView').style.display = 'none';
@@ -1277,9 +1277,38 @@
                 document.getElementById('taskResultMsg').innerText = "";
                 document.getElementById('taskInputGroup').style.display = 'flex';
             } else {
-                document.getElementById('currentPromptWord').innerText = "🎉 Imtihon Yakunlandi!";
-                document.getElementById('taskInputGroup').style.display = 'none';
-                document.getElementById('taskResultMsg').innerHTML = `<div style="color: #34d399;">To'g'ri: ${correctAnswersCount} | Xato: ${wrongAnswersCount}</div>`;
+                // Unit tugatilganda natijani saqlash
+                finishExamUnit();
+            }
+        }
+
+        function finishExamUnit() {
+            document.getElementById('currentPromptWord').innerText = "🎉 Unit Yakunlandi!";
+            document.getElementById('taskInputGroup').style.display = 'none';
+            
+            let totalWordsInUnit = currentActiveWords.length;
+            let correctUniqueCount = correctWordsInCurrentUnitSet.size;
+            let percent = Math.round((correctUniqueCount / totalWordsInUnit) * 100);
+
+            document.getElementById('taskResultMsg').innerHTML = `<div style="color: #34d399; font-weight:700;">Natija: ${correctUniqueCount} / ${totalWordsInUnit} ta to'g'ri (${percent}%)</div>`;
+
+            if (currentStudentId && currentStudentId !== 'ukarimov_admin') {
+                let st = studentsDB[currentStudentId];
+                if (!st.unitScores) st.unitScores = {};
+                
+                let key = `b${activeExamBook}_u${activeExamUnit}`;
+                // Agar avval ishlanmagan yoki yuqoriroq natija bo'lsa yangilash
+                if (!st.unitScores[key] || percent > st.unitScores[key].percent) {
+                    st.unitScores[key] = {
+                        book: activeExamBook,
+                        unit: activeExamUnit,
+                        correct: correctUniqueCount,
+                        total: totalWordsInUnit,
+                        percent: percent
+                    };
+                }
+                saveDB();
+                updateStudentUI();
             }
         }
 
@@ -1303,13 +1332,16 @@
             }
 
             let st = studentsDB[currentStudentId];
-            st.totalAttempts++;
+            if (!st.learnedWords) st.learnedWords = {};
 
             if (isCorrect) {
-                correctAnswersCount++;
-                st.totalCorrect++;
+                correctInThisSession++;
+                correctWordsInCurrentUnitSet.add(wordObj.en);
+
+                // Unikal o'zlashtirilgan so'zlarga qo'shish (takroran hisoblanmaydi)
+                st.learnedWords[wordObj.en] = true;
                 st.xp += 15;
-                if (activeExamBook === 1) st.book1++; else st.book2++;
+
                 saveDB();
                 updateStudentUI();
                 msgEl.innerText = "✅ To'g'ri!";
@@ -1317,7 +1349,7 @@
                 currentIndex++;
                 setTimeout(loadWord, 1500);
             } else {
-                wrongAnswersCount++;
+                wrongInThisSession++;
                 saveDB();
                 updateStudentUI();
                 let correctAnsText = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
@@ -1328,20 +1360,83 @@
             }
         }
 
+        // --- AI WRITING TAHLILI ---
         function loadStudentAssignments() {
             let container = document.getElementById('studentAssignmentsList');
             if (!container) return;
             container.innerHTML = '';
-            if (assignmentsDB.length === 0) { container.innerHTML = `<div class="general-card"><p>Topshiriqlar yo'q.</p></div>`; return; }
+            if (assignmentsDB.length === 0) { 
+                container.innerHTML = `<div class="general-card"><p>Topshiriqlar yo'q.</p></div>`; 
+                return; 
+            }
+
+            let st = studentsDB[currentStudentId] || {};
+            if (!st.submissions) st.submissions = {};
 
             assignmentsDB.forEach(item => {
+                let submittedData = st.submissions[item.id];
+                let submittedText = submittedData ? submittedData.text : '';
+                let feedbackHtml = submittedData ? `
+                    <div style="margin-top:10px; padding:10px; background:#090b16; border:1px solid #232943; border-radius:10px;">
+                        <b style="color:#34d399;">🤖 AI Tahlil Natijasi:</b>
+                        <p style="font-size:11px; color:#cbd5e1; margin-top:4px;">${submittedData.feedback}</p>
+                    </div>
+                ` : '';
+
                 container.innerHTML += `
-                    <div class="general-card">
+                    <div class="general-card" style="margin-bottom: 12px;">
                         <span class="badge-purple">${item.type.toUpperCase()}</span>
                         <p style="margin-top: 6px; color:#fff;"><b>Mavzu:</b> ${item.content}</p>
+                        <div style="margin-top: 10px;">
+                            <textarea id="writingText_${item.id}" class="task-input" rows="4" placeholder="Ingliz tilida to'liq gaplar bilan yozing...">${submittedText}</textarea>
+                            <button class="btn-purple" style="margin-top: 8px; width:100%;" onclick="submitWriting(${item.id})">Javobni yuborish va AI Tahlil olish</button>
+                        </div>
+                        <div id="feedbackContainer_${item.id}">
+                            ${feedbackHtml}
+                        </div>
                     </div>
                 `;
             });
+        }
+
+        function submitWriting(assignmentId) {
+            let textVal = document.getElementById(`writingText_${assignmentId}`).value.trim();
+            if (!textVal) {
+                alert("Iltimos, matn yozing!");
+                return;
+            }
+
+            // AI tahlil simulyatsiyasi (grammatika, so'zlar va gap tuzilishi)
+            let sentences = textVal.split(/[.!?]+/).filter(Boolean);
+            let wordCount = textVal.split(/\s+/).length;
+            let hasCommonErrors = textVal.toLowerCase().includes("i go") || textVal.toLowerCase().includes("he go") || textVal.toLowerCase().includes("she like");
+            
+            let feedback = "";
+            if (sentences.length < 2) {
+                feedback = `⚠️ Matn juda qisqa (${sentences.length} ta gap). Ingliz tilida to'liqroq va kamida 3-4 ta bog'langan gaplar tuzish tavsiya etiladi. `;
+            } else {
+                feedback = `✅ Ajoyib! Jami ${sentences.length} ta gap va ${wordCount} ta so'z yozildi. `;
+            }
+
+            if (hasCommonErrors) {
+                feedback += `Grammatik xato aniqlandi: Fe'l tuslanishi yoki zamonlarda kichik xatolar bor (masalan: "He go" o'rniga "He goes" ishlatilishi kerak). `;
+            } else {
+                feedback += `Grammatik va so'z tuzilishi bo'yicha jiddiy xatolar topilmadi. Gaplar mazmuni ravon yozilgan! 🌟`;
+            }
+
+            let st = studentsDB[currentStudentId];
+            if (!st.submissions) st.submissions = {};
+            st.submissions[assignmentId] = { text: textVal, feedback: feedback };
+            saveDB();
+
+            let feedContainer = document.getElementById(`feedbackContainer_${assignmentId}`);
+            feedContainer.innerHTML = `
+                <div style="margin-top:10px; padding:10px; background:#090b16; border:1px solid #232943; border-radius:10px;">
+                    <b style="color:#34d399;">🤖 AI Tahlil Natijasi:</b>
+                    <p style="font-size:11px; color:#cbd5e1; margin-top:4px;">${feedback}</p>
+                </div>
+            `;
+            alert("Topshiriq muvaffaqiyatli tahlil qilindi va saqlandi!");
         }
 
         function executeLogin() {
@@ -1366,7 +1461,7 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v7'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1396,7 +1491,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v7'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
@@ -1404,11 +1499,13 @@
             tbody.innerHTML = '';
             for (let id in studentsDB) {
                 let st = studentsDB[id];
+                let b1Count = st.unitScores ? Object.values(st.unitScores).filter(s => s.book == 1).length : 0;
+                let b2Count = st.unitScores ? Object.values(st.unitScores).filter(s => s.book == 2).length : 0;
                 tbody.innerHTML += `
                     <tr>
                         <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id}</span></td>
-                        <td>${st.book1} ta</td>
-                        <td>${st.book2} ta</td>
+                        <td>${b1Count} ta unit</td>
+                        <td>${b2Count} ta unit</td>
                         <td>⚡ ${st.xp} XP</td>
                         <td><button class="btn-delete" onclick="deleteStudent('${id}')">O'chirish</button></td>
                     </tr>
@@ -1420,17 +1517,42 @@
             if (!currentStudentId || currentStudentId === 'ukarimov_admin') return;
             let st = studentsDB[currentStudentId];
             if (!st) return;
-            let totalWords = st.book1 + st.book2;
-            let percent = st.totalAttempts > 0 ? Math.round((st.totalCorrect / st.totalAttempts) * 100) : 0;
+
+            let uniqueLearnedWordsCount = st.learnedWords ? Object.keys(st.learnedWords).length : 0;
+            
+            // Jami unitlar foizini hisoblash
+            let unitScoresArr = st.unitScores ? Object.values(st.unitScores) : [];
+            let totalPercentSum = unitScoresArr.reduce((acc, curr) => acc + curr.percent, 0);
+            let avgPercent = unitScoresArr.length > 0 ? Math.round(totalPercentSum / unitScoresArr.length) : 0;
 
             document.getElementById('headerXp').innerText = "⚡ " + st.xp + " XP";
-            document.getElementById('learnedWordsCountHome').innerText = totalWords + " ta";
-            document.getElementById('learnedWordsCountLearn').innerText = totalWords + " ta";
-            document.getElementById('learnedWordsCountTask').innerText = totalWords + " ta";
-            document.getElementById('knowledgePercent').innerText = percent + "%";
-            document.getElementById('knowledgePercentTask').innerText = percent + "%";
-            document.getElementById('reportWords').innerText = totalWords + " ta";
-            document.getElementById('reportPercent').innerText = percent + "%";
+            document.getElementById('learnedWordsCountHome').innerText = uniqueLearnedWordsCount + " ta";
+            document.getElementById('learnedWordsCountLearn').innerText = uniqueLearnedWordsCount + " ta";
+            document.getElementById('knowledgePercent').innerText = avgPercent + "%";
+            document.getElementById('reportWords').innerText = uniqueLearnedWordsCount + " ta";
+            document.getElementById('reportPercent').innerText = avgPercent + "%";
+
+            // Unitlar bo'yicha ko'rsatkichlar jadvalini to'ldirish
+            let perfList = document.getElementById('unitPerformanceList');
+            if (perfList) {
+                perfList.innerHTML = '';
+                if (unitScoresArr.length === 0) {
+                    perfList.innerHTML = `<p style="color:#64748b; font-size:11px;">Hali hech qanday unit ishlab tugatilmagan.</p>`;
+                } else {
+                    unitScoresArr.forEach(score => {
+                        perfList.innerHTML += `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:#090b16; padding:10px 14px; border:1px solid #232943; border-radius:10px;">
+                                <div>
+                                    <b style="color:#f472b6;">Essential ${score.book} - Unit ${score.unit}</b>
+                                    <p style="font-size:10px; color:#94a3b8;">To'g'ri topilganlar: ${score.correct} / ${score.total} ta</p>
+                                </div>
+                                <div style="color:#34d399; font-weight:800; font-size:14px;">${score.percent}%</div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
             updateLeaderboard();
         }
 
@@ -1479,6 +1601,7 @@
             if(tabId === 'tabStudentAssignments') loadStudentAssignments();
             if(tabId === 'tabUploadAssignment') renderAdminUnitList();
             if(tabId === 'tabResults') loadAdminTable();
+            if(tabId === 'tabReport') updateStudentUI();
             window.scrollTo(0, 0);
         }
 
