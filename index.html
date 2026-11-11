@@ -307,7 +307,7 @@
             font-weight: 600;
         }
 
-        /* Yozma Tarjima Topshiriq Paneli (Imtihon bo'limi uchun) */
+        /* Yozma Tarjima Topshiriq Paneli */
         .task-card {
             background: #121526;
             border: 1px solid #20253e;
@@ -401,7 +401,7 @@
             line-height: 1.5;
         }
 
-        /* Bottom Nav */
+        /* Bottom Nav - Skrinshotdagi kabi dizayn */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -412,7 +412,7 @@
             border-top: 1px solid #1c2138;
             display: flex;
             justify-content: center;
-            gap: 24px;
+            gap: 28px;
             align-items: center;
             z-index: 100;
         }
@@ -438,6 +438,21 @@
 
         .nav-icon {
             font-size: 18px;
+        }
+
+        /* Aktiv element uchun skrinshotdagi dumaloq, bo'rtib chiqqan qism */
+        .active-icon-wrapper {
+            background: #8b5cf6;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -12px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+            font-size: 16px;
         }
     </style>
 </head>
@@ -591,26 +606,36 @@
 
         </div>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Navigation (Skrinshotdagi kabi dinamik dizayn) -->
         <div class="bottom-nav">
             <button class="nav-item active" onclick="switchTab('tabHome')" id="navHome">
-                <span class="nav-icon">🏠</span>
+                <div class="nav-icon-container" id="iconHome">
+                    <span class="nav-icon">🏠</span>
+                </div>
                 <span>Bo'sh sahifa</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabLearn')" id="navLearn">
-                <span class="nav-icon">📖</span>
+                <div class="nav-icon-container" id="iconLearn">
+                    <span class="nav-icon">📖</span>
+                </div>
                 <span>O'rganish</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabTask')" id="navTask">
-                <span class="nav-icon">📝</span>
+                <div class="nav-icon-container active-icon-wrapper" id="iconTask">
+                    <span class="nav-icon">📝</span>
+                </div>
                 <span>Imtihon</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabReport')" id="navReport">
-                <span class="nav-icon">📊</span>
+                <div class="nav-icon-container" id="iconReport">
+                    <span class="nav-icon">📊</span>
+                </div>
                 <span>Hisobot</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabRating')" id="navRating">
-                <span class="nav-icon">🏆</span>
+                <div class="nav-icon-container" id="iconRating">
+                    <span class="nav-icon">🏆</span>
+                </div>
                 <span>Reyting</span>
             </button>
         </div>
@@ -651,62 +676,32 @@
                 targetTab.classList.add('active-tab');
             }
 
+            // Barcha nav itemlardan active ni olib tashlash va wrapper'larni oddiy holatga keltirish
             const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const iconContainer = item.querySelector('.nav-icon-container');
+                if (iconContainer) {
+                    iconContainer.classList.remove('active-icon-wrapper');
+                }
+            });
 
-            if (tabId === 'tabHome') document.getElementById('navHome').classList.add('active');
-            if (tabId === 'tabLearn') document.getElementById('navLearn').classList.add('active');
-            if (tabId === 'tabTask') document.getElementById('navTask').classList.add('active');
-            if (tabId === 'tabReport') document.getElementById('navReport').classList.add('active');
-            if (tabId === 'tabRating') document.getElementById('navRating').classList.add('active');
+            // Tanlangan tabga active klassini va dumaloq dizaynni berish
+            let activeNavBtn = document.getElementById('navHome');
+            let activeIconContainer = document.getElementById('iconHome');
 
-            window.scrollTo(0, 0);
-        }
-
-        function loadWord() {
-            if (currentIndex < vocabularyList.length) {
-                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
-                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
-                document.getElementById('userTranslation').value = "";
-                document.getElementById('taskResultMsg').innerText = "";
-            } else {
-                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
-                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
-                document.getElementById('taskResultMsg').style.color = "#34d399";
-            }
-        }
-
-        function checkTranslation() {
-            if (currentIndex >= vocabularyList.length) return;
-
-            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
-            let validAnswers = vocabularyList[currentIndex].uz;
-            let msgEl = document.getElementById('taskResultMsg');
-
-            if (userVal === "") {
-                alert("Iltimos, tarjimani yozing!");
-                return;
-            }
-
-            let isCorrect = validAnswers.includes(userVal);
-
-            if (isCorrect) {
-                msgEl.innerText = "✅ To'g'ri! Barakalla.";
-                msgEl.style.color = "#34d399";
-                learnedCount++;
-                
-                document.getElementById('learnedWordsCountHome').innerText = learnedCount + " ta";
-                document.getElementById('learnedWordsCountLearn').innerText = learnedCount + " ta";
-                document.getElementById('learnedWordsCountTask').innerText = learnedCount + " ta";
-                
-                currentIndex++;
-                setTimeout(loadWord, 1500);
-            } else {
-                msgEl.innerText = "❌ Xato! Qaytadan urinib ko'ring.";
-                msgEl.style.color = "#f87171";
-            }
-        }
-    </script>
-
-</body>
-</html>
+            if (tabId === 'tabHome') {
+                activeNavBtn = document.getElementById('navHome');
+                activeIconContainer = document.getElementById('iconHome');
+            } else if (tabId === 'tabLearn') {
+                activeNavBtn = document.getElementById('navLearn');
+                activeIconContainer = document.getElementById('iconLearn');
+            } else if (tabId === 'tabTask') {
+                activeNavBtn = document.getElementById('navTask');
+                activeIconContainer = document.getElementById('iconTask');
+            } else if (tabId === 'tabReport') {
+                activeNavBtn = document.getElementById('navReport');
+                activeIconContainer = document.getElementById('iconReport');
+            } else if (tabId === 'tabRating') {
+                activeNavBtn = document.getElementById('navRating');
+                activeIconContainer = document.
