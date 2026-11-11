@@ -21,7 +21,7 @@
             align-items: flex-start;
         }
 
-        /* LOGIN EKRANI */
+        /* 1-BOSQICH: LOGIN EKRANI */
         .login-wrapper {
             width: 100%;
             max-width: 400px;
@@ -91,7 +91,7 @@
             margin-top: 10px;
         }
 
-        /* DASHBOARD */
+        /* 2-BOSQICH: DASHBOARD */
         .dashboard-screen {
             display: none;
             width: 100%;
@@ -290,6 +290,12 @@
             font-weight: 600;
         }
 
+        .stat-sub-blue {
+            font-size: 10px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
         /* Yozma Tarjima Topshiriq Paneli */
         .task-card {
             background: #121526;
@@ -364,7 +370,7 @@
             font-weight: 600;
         }
 
-        /* Bottom Nav */
+        /* Bottom Nav - Ixcham va to'g'ri joylashuv */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -478,6 +484,118 @@
                 <div class="stat-card">
                     <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
                     <div class="stat-value">98%</div>
-                    <div class="stat-sub" style="color: #38bdf8;">Faol o'quvchi</div>
+                    <div class="stat-sub-blue">Faol o'quvchi</div>
                 </div>
             </div>
+
+            <!-- Yozma Tarjima Topshiriq Bo'limi -->
+            <div class="task-card">
+                <div class="task-header">
+                    <span class="word-badge">TARJIMA TOPSHIRIG'I</span>
+                    <span class="word-counter" id="wordProgress">1 / 3 so'z</span>
+                </div>
+                <div class="target-word" id="currentEnglishWord">Education</div>
+                <div class="task-input-group">
+                    <input type="text" class="task-input" id="userTranslation" placeholder="O'zbekcha tarjimasini yozing...">
+                    <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
+                </div>
+                <div class="task-result" id="taskResultMsg"></div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>Bo'sh sahifa</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📖</span>
+                <span>O'rganish</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <div class="active-icon">📝</div>
+                <span>Topshiriq</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Hisobot</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                <span>Reyting</span>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        const vocabularyList = [
+            { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
+            { en: "Knowledge", uz: ["bilim"] },
+            { en: "Success", uz: ["muvaffaqiyat", "omad"] }
+        ];
+
+        let currentIndex = 0;
+        let learnedCount = 184;
+
+        function executeLogin() {
+            var phone = document.getElementById('phone').value.trim();
+            var password = document.getElementById('password').value.trim();
+
+            if (phone === "" || password === "") {
+                alert("Iltimos, telefon raqam va parolni kiriting!");
+                return;
+            }
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'flex';
+            window.scrollTo(0, 0);
+            loadWord();
+        }
+
+        function loadWord() {
+            if (currentIndex < vocabularyList.length) {
+                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
+                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
+                document.getElementById('userTranslation').value = "";
+                document.getElementById('taskResultMsg').innerText = "";
+            } else {
+                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
+                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
+                document.getElementById('taskResultMsg').style.color = "#34d399";
+            }
+        }
+
+        function checkTranslation() {
+            if (currentIndex >= vocabularyList.length) return;
+
+            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
+            let validAnswers = vocabularyList[currentIndex].uz;
+            let msgEl = document.getElementById('taskResultMsg');
+
+            if (userVal === "") {
+                alert("Iltimos, tarjimani yozing!");
+                return;
+            }
+
+            let isCorrect = validAnswers.includes(userVal);
+
+            if (isCorrect) {
+                msgEl.innerText = "✅ To'g'ri! Barakalla.";
+                msgEl.style.color = "#34d399";
+                learnedCount++;
+                document.getElementById('learnedWordsCount').innerText = learnedCount + " ta";
+                
+                currentIndex++;
+                setTimeout(loadWord, 1500);
+            } else {
+                msgEl.innerText = "❌ Xato! Qaytadan urinib ko'ring.";
+                msgEl.style.color = "#f87171";
+            }
+        }
+    </script>
+
+</body>
+</html>
