@@ -435,4 +435,224 @@
             color: #64748b;
         }
 
-        .btn-start
+        .btn-start {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Bottom Nav - Ixcham va to'g'ri joylashuv */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: #0d0f1c;
+            border-top: 1px solid #1c2138;
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #64748b;
+            font-size: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            width: 55px;
+        }
+
+        .nav-item.active {
+            color: #c084fc;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        .active-icon {
+            background: #8b5cf6;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -12px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1-BOSQICH: LOGIN EKRANI -->
+    <div class="login-wrapper" id="loginScreen">
+        <div class="login-card">
+            <h2>U.Karimov Ta'lim Platformasiga Xush kelibsiz</h2>
+            <p>Shaxsiy kabinetga kirish</p>
+            
+            <div class="form-group">
+                <input type="tel" id="phone" placeholder="Telefon raqam (+998...)">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Parol">
+            </div>
+            <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
+        </div>
+    </div>
+
+    <!-- 2-BOSQICH: DASHBOARD -->
+    <div class="dashboard-screen" id="dashboardScreen">
+        
+        <!-- Header -->
+        <div class="top-navbar">
+            <div class="brand">
+                <div class="brand-logo">📚</div>
+                <div class="brand-text">
+                    <h1>Topqir English</h1>
+                    <p>Smart Quiz & Learning Platform</p>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="xp-pill">⚡ 1,240 XP</div>
+                <div class="role-pill">O'quvchi</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="main-container">
+
+            <!-- Hero Banner -->
+            <div class="hero-card">
+                <div class="hero-header">
+                    <span class="badge-purple">Kunlik Vazifa</span>
+                    <span class="hero-date">10-Noyabr</span>
+                </div>
+                <h2 class="hero-title">Bilimni <span>o'yinga va reytingga</span> aylantiring!</h2>
+                <p class="hero-desc">Bugun 20 ta yangi lug'at yodlang va Anti-Cheat imtihonida o'z bilimlaringizni halol topshirib reytingda 1-o'ringa chiqing!</p>
+                <div class="hero-btns">
+                    <button class="btn-purple">📖 O'rganishni Boshlash</button>
+                    <button class="btn-outline">🛡️ Imtihon Topshiriq</button>
+                </div>
+            </div>
+
+            <!-- PIN Panel -->
+            <div class="pin-panel">
+                <div class="pin-left">
+                    <div class="pin-icon">🔑</div>
+                    <div class="pin-text">
+                        <h3>PIN-Kod bilan kirish</h3>
+                        <p>O'qituvchi bergan kodni kiriting</p>
+                    </div>
+                </div>
+                <div class="pin-right">
+                    <input type="text" class="pin-input" value="849201">
+                    <button class="btn-pin">Kirish</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                    <div class="stat-value">184 ta</div>
+                    <div class="stat-sub">↗ +12 ta bu hafta</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">HALOLLIK KO'RSATKICHI</div>
+                    <div class="stat-value">98%</div>
+                    <div class="stat-sub-gray">0 ta cheat holati</div>
+                </div>
+            </div>
+
+            <!-- Exam Section -->
+            <div class="section-header">
+                <h3>🛡️ Xavfsiz Imtihonlar</h3>
+                <p>Oyna o'zgartirish va copy-paste taqiqlangan</p>
+            </div>
+
+            <div class="exam-card">
+                <div>
+                    <div class="exam-tags">
+                        <span class="tag">VOCABULARY</span>
+                        <span class="pin-lbl">PIN: 849201</span>
+                    </div>
+                    <div class="exam-title">IELTS Band 7+ Words</div>
+                    <div class="exam-meta">5 savol • 25s taymer</div>
+                </div>
+                <button class="btn-start">Boshlash ▷</button>
+            </div>
+
+            <div class="exam-card">
+                <div>
+                    <div class="exam-tags">
+                        <span class="tag tag-blue">GRAMMAR</span>
+                        <span class="pin-lbl">PIN: 182938</span>
+                    </div>
+                    <div class="exam-title">Essential Grammar Challenge</div>
+                    <div class="exam-meta">4 savol • 30s taymer</div>
+                </div>
+                <button class="btn-start">Boshlash ▷</button>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>Bo'sh sahifa</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📖</span>
+                <span>O'rganish</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <div class="active-icon">🛡️</div>
+                <span>Imtihon</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Hisobot</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                <span>Reyting</span>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        function executeLogin() {
+            var phone = document.getElementById('phone').value.trim();
+            var password = document.getElementById('password').value.trim();
+
+            if (phone === "" || password === "") {
+                alert("Iltimos, telefon raqam va parolni kiriting!");
+                return;
+            }
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'flex';
+            window.scrollTo(0, 0);
+        }
+    </script>
+
+</body>
+</html>
