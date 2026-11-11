@@ -31,48 +31,47 @@
             align-items: center;
             z-index: 1000;
             padding: 20px;
-            overflow-y: auto;
         }
 
         .login-card {
             background: #121526;
             border: 1px solid #20253e;
             border-radius: 20px;
-            padding: 30px 24px;
+            padding: 36px 28px;
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
 
         .login-card h2 {
             color: #ffffff;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             line-height: 1.35;
         }
 
         .login-card p {
             color: #8b9bb4;
-            font-size: 12px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            margin-bottom: 28px;
         }
 
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 18px;
             text-align: left;
             position: relative;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 45px 12px 14px;
+            padding: 14px 45px 14px 18px;
             background: #090b16;
             border: 1px solid #232943;
             color: #fff;
-            border-radius: 10px;
-            font-size: 13px;
+            border-radius: 12px;
+            font-size: 14px;
             outline: none;
             transition: all 0.2s;
         }
@@ -84,7 +83,7 @@
 
         .toggle-password {
             position: absolute;
-            right: 12px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -96,36 +95,19 @@
 
         .btn-submit {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
-            margin-top: 5px;
+            margin-top: 10px;
         }
 
-        .divider {
-            margin: 18px 0;
-            border-top: 1px solid #20253e;
-            position: relative;
-        }
-
-        .divider span {
-            position: absolute;
-            top: -9px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #121526;
-            padding: 0 10px;
-            font-size: 11px;
-            color: #64748b;
-        }
-
-        /* 2. O'QUVCHI DASHBOARD */
+        /* 2. DASHBOARD (Barcha uchun umumiy) */
         .dashboard-screen {
             display: none;
             width: 100%;
@@ -134,24 +116,6 @@
             align-items: center;
             padding-top: 70px;
             padding-bottom: 90px;
-        }
-
-        /* 3. O'QITUVCHI BOSHQARUV PANELI */
-        .admin-screen {
-            display: none;
-            width: 100%;
-            min-height: 100vh;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
-        }
-
-        .admin-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
         }
 
         .admin-table {
@@ -572,7 +536,7 @@
             border-top: 1px solid #1c2138;
             display: flex;
             justify-content: center;
-            gap: 28px;
+            gap: 15px;
             align-items: center;
             z-index: 100;
         }
@@ -586,7 +550,7 @@
             font-size: 10px;
             text-decoration: none;
             font-weight: 600;
-            width: 55px;
+            width: 52px;
             cursor: pointer;
             background: none;
             border: none;
@@ -603,15 +567,15 @@
         .active-icon-wrapper {
             background: #8b5cf6;
             color: #fff;
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: -12px;
+            margin-top: -10px;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
-            font-size: 16px;
+            font-size: 15px;
         }
     </style>
 </head>
@@ -624,73 +588,18 @@
             <p>Shaxsiy kabinetga kirish</p>
             
             <div class="form-group">
-                <input type="text" id="phone" placeholder="Login yoki telefon raqam">
+                <input type="text" id="phone" placeholder="Login">
             </div>
             <div class="form-group">
                 <input type="password" id="password" placeholder="Parol">
                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">👁️</button>
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-
-            <div class="divider"><span>Yoki yangi o'quvchimisiz?</span></div>
-
-            <!-- O'quvchi o'zini o'zi ro'yxatdan o'tkazishi uchun panel -->
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <input type="text" id="selfStudentName" placeholder="Ism-familiyangiz" class="task-input" style="font-size: 12px; padding: 10px;">
-                <input type="text" id="selfStudentLogin" placeholder="O'zingizga login o'ylab toping" class="task-input" style="font-size: 12px; padding: 10px;">
-                <div style="position: relative;">
-                    <input type="password" id="selfStudentPass" placeholder="Parol o'ylab toping" class="task-input" style="font-size: 12px; padding: 10px 35px 10px 10px; width: 100%;">
-                    <button type="button" class="toggle-password" onclick="toggleSelfPasswordVisibility()" style="font-size: 14px; right: 10px;">👁️</button>
-                </div>
-                <button type="button" class="btn-outline" onclick="registerSelfStudent()" style="padding: 10px; font-size: 12px;">O'quvchi sifatida ro'yxatdan o'tish</button>
-            </div>
-
-            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">Admin: <b>ukarimov</b> / <b>admin2026</b></p>
+            <p style="font-size: 10px; color: #64748b; margin-top: 20px;">Admin: <b>ukarimov</b> / <b>admin2026</b></p>
         </div>
     </div>
 
-    <!-- O'QITUVCHI BOSHQARUV PANELI -->
-    <div class="admin-screen" id="adminScreen">
-        <div class="admin-container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 18px; color: #c084fc;">👨‍🏫 O'qituvchi Boshqaruv Paneli</h2>
-                <button class="btn-back" onclick="logoutAdmin()">Chiqish</button>
-            </div>
-
-            <!-- O'quvchi qo'shish bloki -->
-            <div class="general-card">
-                <h3>➕ Yangi O'quvchi Qo'shish</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                    <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
-                    <input type="text" id="newStudentLogin" placeholder="Login (masalan: mustafo)" class="task-input">
-                    <input type="text" id="newStudentPass" placeholder="Parol (masalan: mustafo2003)" class="task-input">
-                    <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
-                </div>
-            </div>
-
-            <div class="general-card">
-                <h3>📊 O'quvchilar Statistikasi</h3>
-                <p>Barcha talabalarning kitoblar bo'yicha ko'rsatkichlari:</p>
-            </div>
-
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>O'quvchi</th>
-                        <th>Essential 1</th>
-                        <th>Essential 2</th>
-                        <th>Jami</th>
-                        <th>XP</th>
-                    </tr>
-                </thead>
-                <tbody id="adminTableBody">
-                    <!-- Dinamik to'ldiriladi -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- 2. O'QUVCHI DASHBOARD -->
+    <!-- 2. DASHBOARD (O'quvchi va O'qituvchi uchun umumiy) -->
     <div class="dashboard-screen" id="dashboardScreen">
         
         <!-- Header -->
@@ -704,7 +613,7 @@
             </div>
             <div class="nav-right">
                 <div class="xp-pill" id="headerXp">⚡ 0 XP</div>
-                <div class="role-pill">O'quvchi</div>
+                <div class="role-pill" id="userRolePill">O'quvchi</div>
             </div>
         </div>
 
@@ -716,7 +625,7 @@
                 <div class="hero-card">
                     <div class="hero-header">
                         <span class="badge-purple">Kunlik Vazifa</span>
-                        <span class="hero-date">10-Noyabr</span>
+                        <span class="hero-date">11-Noyabr</span>
                     </div>
                     <h2 class="hero-title">Bilimingizni <span>topshiriqlar orqali rivojlantiring!</span></h2>
                     <p class="hero-desc">Bugungi lug'at va topshiriqlarni bajarib, bilim darajangizni oshiring va reytingda yuqoriga ko'tariling!</p>
@@ -743,7 +652,7 @@
                     <h3>Xush kelibsiz!</h3>
                     <p>Ushbu platforma orqali siz o'z bilimingizni mustahkamlab, yangi so'zlarni o'zlashtirib borishingiz mumkin. Pastdagi menyu orqali boshqa bo'limlarga o'ting.</p>
                 </div>
-                <button class="btn-back" onclick="logoutStudent()" style="margin-top: 10px; width: 100%; text-align: center;">Tizimdan chiqish</button>
+                <button class="btn-back" onclick="logoutSession()" style="margin-top: 10px; width: 100%; text-align: center;">Tizimdan chiqish</button>
             </div>
 
             <!-- TAB 2: O'RGANISH -->
@@ -850,15 +759,52 @@
                 </div>
             </div>
 
+            <!-- TAB 6: O'QITUVCHI BOSHQARUV PANELI (Faqat O'qituvchiga ko'rinadi) -->
+            <div class="tab-content" id="tabTeacherPanel">
+                <div class="general-card">
+                    <h3>👨‍🏫 O'qituvchi Boshqaruv Paneli</h3>
+                    <p>Yangi o'quvchi qo'shish va ularning natijalarini kuzatish:</p>
+                </div>
+
+                <div class="general-card">
+                    <h3>➕ Yangi O'quvchi Qo'shish</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                        <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
+                        <input type="text" id="newStudentLogin" placeholder="Login (masalan: mustafo)" class="task-input">
+                        <input type="text" id="newStudentPass" placeholder="Parol (masalan: mustafo2003)" class="task-input">
+                        <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
+                    </div>
+                </div>
+
+                <div class="general-card">
+                    <h3>📊 O'quvchilar Statistikasi</h3>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>O'quvchi</th>
+                            <th>Essential 1</th>
+                            <th>Essential 2</th>
+                            <th>Jami</th>
+                            <th>XP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <!-- Dinamik to'ldiriladi -->
+                    </tbody>
+                </table>
+            </div>
+
         </div>
 
         <!-- Bottom Navigation -->
-        <div class="bottom-nav">
+        <div class="bottom-nav" id="bottomNavContainer">
             <button class="nav-item active" onclick="switchTab('tabHome')" id="navHome">
                 <div class="nav-icon-container active-icon-wrapper" id="iconHome">
                     <span class="nav-icon">🏠</span>
                 </div>
-                <span>Bo'sh sahifa</span>
+                <span>Bosh sahifa</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabLearn')" id="navLearn">
                 <div class="nav-icon-container" id="iconLearn">
@@ -883,6 +829,13 @@
                     <span class="nav-icon">🏆</span>
                 </div>
                 <span>Reyting</span>
+            </button>
+            <!-- Faqat O'qituvchiga ko'rinadigan tugma -->
+            <button class="nav-item" onclick="switchTab('tabTeacherPanel')" id="navTeacherTab" style="display: none;">
+                <div class="nav-icon-container" id="iconTeacherTab">
+                    <span class="nav-icon">👨‍🏫</span>
+                </div>
+                <span>Boshqaruv</span>
             </button>
         </div>
 
@@ -924,47 +877,6 @@
             passInput.type = (passInput.type === "password") ? "text" : "password";
         }
 
-        function toggleSelfPasswordVisibility() {
-            let passInput = document.getElementById('selfStudentPass');
-            passInput.type = (passInput.type === "password") ? "text" : "password";
-        }
-
-        // O'quvchi o'zini o'zi ro'yxatdan o'tkazishi
-        function registerSelfStudent() {
-            let name = document.getElementById('selfStudentName').value.trim();
-            let login = document.getElementById('selfStudentLogin').value.trim().toLowerCase();
-            let pass = document.getElementById('selfStudentPass').value.trim();
-
-            if (!name || !login || !pass) {
-                alert("Iltimos, ism, login va parolni kiriting!");
-                return;
-            }
-
-            if (studentsDB[login]) {
-                alert("Bu login band! Boshqa login tanlang.");
-                return;
-            }
-
-            studentsDB[login] = {
-                name: name,
-                pass: pass,
-                book1: 0,
-                book2: 0,
-                xp: 0,
-                totalCorrect: 0,
-                totalAttempts: 0
-            };
-
-            saveDB();
-            alert("Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi kirish bo'limidan kiring.");
-            
-            document.getElementById('selfStudentName').value = '';
-            document.getElementById('selfStudentLogin').value = '';
-            document.getElementById('selfStudentPass').value = '';
-            document.getElementById('phone').value = login;
-        }
-
-        // Admin qo'shishi
         function addNewStudent() {
             let name = document.getElementById('newStudentName').value.trim();
             let login = document.getElementById('newStudentLogin').value.trim().toLowerCase();
@@ -1008,15 +920,23 @@
                 return;
             }
 
+            // O'qituvchi admin tekshiruvi
             if (loginInput === "ukarimov" && passInput === "admin2026") {
+                currentStudentId = "ukarimov";
                 document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminScreen').style.display = 'flex';
+                document.getElementById('dashboardScreen').style.display = 'flex';
+                document.getElementById('currentStudentName').innerText = "U.Karimov (O'qituvchi)";
+                document.getElementById('userRolePill').innerText = "O'qituvchi";
+                document.getElementById('headerXp').style.display = 'none';
+                document.getElementById('navTeacherTab').style.display = 'flex';
+                switchTab('tabTeacherPanel');
                 loadAdminTable();
                 return;
             }
 
+            // O'quvchi tekshiruvi
             if (!studentsDB[loginInput]) {
-                alert("Bunday o'quvchi topilmadi! Iltimos, pastdan ro'yxatdan o'ting.");
+                alert("Bunday o'quvchi topilmadi! Iltimos, o'qituvchingizdan login oling.");
                 return;
             }
 
@@ -1029,20 +949,17 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboardScreen').style.display = 'flex';
             document.getElementById('currentStudentName').innerText = studentsDB[currentStudentId].name;
+            document.getElementById('userRolePill').innerText = "O'quvchi";
+            document.getElementById('headerXp').style.display = 'block';
+            document.getElementById('navTeacherTab').style.display = 'none';
             updateStudentUI();
+            switchTab('tabHome');
             window.scrollTo(0, 0);
         }
 
-        function logoutStudent() {
+        function logoutSession() {
             currentStudentId = null;
             document.getElementById('dashboardScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('phone').value = '';
-            document.getElementById('password').value = '';
-        }
-
-        function logoutAdmin() {
-            document.getElementById('adminScreen').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('phone').value = '';
             document.getElementById('password').value = '';
@@ -1067,7 +984,7 @@
         }
 
         function updateStudentUI() {
-            if (!currentStudentId) return;
+            if (!currentStudentId || currentStudentId === 'ukarimov') return;
             let st = studentsDB[currentStudentId];
             let totalWords = st.book1 + st.book2;
             let percent = st.totalAttempts > 0 ? Math.round((st.totalCorrect / st.totalAttempts) * 100) : 0;
@@ -1138,6 +1055,10 @@
                 activeNavBtn = document.getElementById('navRating');
                 activeIconContainer = document.getElementById('iconRating');
                 updateLeaderboard();
+            } else if (tabId === 'tabTeacherPanel') {
+                activeNavBtn = document.getElementById('navTeacherTab');
+                activeIconContainer = document.getElementById('iconTeacherTab');
+                loadAdminTable();
             }
 
             if (activeNavBtn) activeNavBtn.classList.add('active');
@@ -1206,7 +1127,7 @@
         }
 
         function checkTranslation() {
-            if (currentIndex >= currentActiveWords.length) return;
+            if (currentIndex >= currentActiveWords.length || currentStudentId === 'ukarimov') return;
 
             let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
             let wordObj = currentActiveWords[currentIndex];
