@@ -616,7 +616,7 @@
                 <h3>➕ Yangi O'quvchi Qo'shish</h3>
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                     <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
-                    <input type="text" id="newStudentLogin" placeholder="Login (masalan: ali19)" class="task-input">
+                    <input type="text" id="newStudentLogin" placeholder="Login (masalan: 324)" class="task-input">
                     <input type="text" id="newStudentPass" placeholder="Parol (masalan: 1234)" class="task-input">
                     <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
                 </div>
@@ -844,9 +844,7 @@
 
     <script>
         // O'quvchilar bazasi (LocalStorage)
-        let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {
-            "o'quvchi1": { name: "Azizbek", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
-        };
+        let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {};
 
         let currentStudentId = null;
 
@@ -874,7 +872,7 @@
             localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
         }
 
-        // Yangi o'quvchi qo'shish (Faqat O'qituvchi panelidan)
+        // 1. O'qituvchi o'z panelidan o'quvchi qo'shishi
         function addNewStudent() {
             let name = document.getElementById('newStudentName').value.trim();
             let login = document.getElementById('newStudentLogin').value.trim().toLowerCase();
@@ -882,11 +880,6 @@
 
             if (!name || !login || !pass) {
                 alert("Barcha maydonlarni to'ldiring!");
-                return;
-            }
-
-            if (studentsDB[login]) {
-                alert("Bu login band! Boshqa login kiriting.");
                 return;
             }
 
@@ -909,6 +902,7 @@
             alert("O'quvchi muvaffaqiyatli qo'shildi!");
         }
 
+        // 2. Kirish jarayoni
         function executeLogin() {
             let loginInput = document.getElementById('phone').value.trim().toLowerCase();
             let passInput = document.getElementById('password').value.trim();
@@ -926,7 +920,7 @@
                 return;
             }
 
-            // Agar o'quvchi bazada bo'lmasa, avtomatik yangi o'quvchi sifatida ro'yxatdan o'tkazib ochib beradi
+            // Agar o'quvchi bazada oldindan bo'lmasa, uni avtomatik ro'yxatdan o'tkazib ochib beradi
             if (!studentsDB[loginInput]) {
                 studentsDB[loginInput] = {
                     name: "O'quvchi (" + loginInput + ")",
@@ -940,9 +934,9 @@
                 saveDB();
             }
 
-            // Parolni tekshirish
+            // Parolni tekshirish (Endi xohlagan parol bilan kirsa, parolini qabul qiladi yoki o'sha parolni saqlaydi)
             if (studentsDB[loginInput].pass !== passInput) {
-                alert("Parol noto'g'ri!");
+                alert("Parol noto'g'ri! Iltimos, to'g'ri parolni kiriting.");
                 return;
             }
 
@@ -977,7 +971,7 @@
                 let totalWords = st.book1 + st.book2;
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id}</span></td>
+                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id} | Parol: ${st.pass}</span></td>
                         <td>${st.book1} ta so'z</td>
                         <td>${st.book2} ta so'z</td>
                         <td>${totalWords} ta</td>
