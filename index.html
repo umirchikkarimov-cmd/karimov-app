@@ -875,7 +875,7 @@
                 <div class="admin-sub-section" id="adminSubVocabSection">
                     <div class="general-card">
                         <h3>📖 Lug'at yuklash (Essential 1 & 2 - Unitlar)</h3>
-                        <p>Faqat inglizcha so'zni yoki "English - O'zbekcha" formatida kiritishingiz mumkin.</p>
+                        <p>Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan).</p>
                         
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <select id="adminUploadBookSelect" class="task-input" onchange="renderAdminUnitList()">
@@ -986,8 +986,9 @@
     </div>
 
     <script>
-        // Avtomatik standart o'zbekcha tarjimalar ro'yxati
+        // Kengaytirilgan va aniq tarjimalar lug'ati (Inglizcha -> O'zbekcha)
         const autoDictionary = {
+            "middle": ["o'rta", "ortacha", "o'rtada"],
             "word": ["so'z", "soz"],
             "education": ["ta'lim", "talim", "o'qitish"],
             "knowledge": ["bilim", "axborot"],
@@ -1021,8 +1022,14 @@
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_db')) || {
-            1: { 1: [{ en: "Word", uz: ["so'z", "soz"] }, { en: "Education", uz: ["ta'lim", "talim"] }, { en: "Knowledge", uz: ["bilim"] }] },
+        // Yangi versiya kalitidan foydalanib eski xatolarni tozalaymiz
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_v3')) || {
+            1: { 1: [
+                { en: "middle", uz: ["o'rta", "ortacha"] },
+                { en: "word", uz: ["so'z", "soz"] },
+                { en: "education", uz: ["ta'lim", "talim"] },
+                { en: "knowledge", uz: ["bilim"] }
+            ] },
             2: {}
         };
 
@@ -1035,9 +1042,9 @@
         let activeExamUnit = 1;
 
         const defaultFallbackWords = [
-            { en: "Word", uz: ["so'z", "soz"] },
-            { en: "Education", uz: ["ta'lim", "talim"] },
-            { en: "Knowledge", uz: ["bilim"] }
+            { en: "middle", uz: ["o'rta", "ortacha"] },
+            { en: "word", uz: ["so'z", "soz"] },
+            { en: "education", uz: ["ta'lim", "talim"] }
         ];
 
         let currentActiveWords = [];
@@ -1051,7 +1058,7 @@
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_custom_units_db', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_custom_units_v3', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
@@ -1133,7 +1140,7 @@
 
             for(let u = 1; u <= 20; u++) {
                 let existingData = customUnitsDB[bookVal] && customUnitsDB[bookVal][u];
-                let existingText = existingData ? existingData.map(w => `${w.en} - ${w.uz[0]}`).join('\n') : '';
+                let existingText = existingData ? existingData.map(w => w.en).join('\n') : '';
                 let statusText = existingData ? `<b style="color:#34d399;">✅ (${existingData.length} ta so'z)</b>` : `<b style="color:#64748b;">Bo'sh</b>`;
                 
                 container.innerHTML += `
@@ -1143,7 +1150,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Masalan:&#10;Word - So'z&#10;Book - Kitob&#10;(yoki faqat Word deb yozsangiz ham tizim avto tarjima qiladi)">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)&#10;Masalan:&#10;middle&#10;word&#10;education">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1165,13 +1172,13 @@
             let parsedWords = [];
 
             lines.forEach(line => {
+                // Agar o'qituvchi "English - O'zbekcha" formatida yozgan bo'lsa yoki faqat inglizcha
                 let parts = line.split(/[-–—]/);
-                let eng = parts[0].trim();
+                let eng = parts[0].trim().toLowerCase();
                 let uzTr = parts.length > 1 ? [parts[1].trim().toLowerCase()] : null;
 
-                if (!uzTr || uzTr[0] === eng.toLowerCase()) {
-                    let lowerEng = eng.toLowerCase();
-                    uzTr = autoDictionary[lowerEng] || [eng.toLowerCase()];
+                if (!uzTr) {
+                    uzTr = autoDictionary[eng] || [eng];
                 }
 
                 parsedWords.push({
@@ -1252,18 +1259,18 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // Perfect 50/50 Random generator for EN <-> UZ
+                // 50% ehtimollik bilan EN -> UZ yoki UZ -> EN chiqadi
                 currentQuestionType = (Math.random() < 0.5) ? 'en2uz' : 'uz2en';
                 let wordObj = currentActiveWords[currentIndex];
                 let promptText = "";
 
                 if (currentQuestionType === 'en2uz') {
-                    // Ekranda inglizcha so'z chiqadi, o'quvchi o'zbekchasini yozadi
+                    // Inglizcha so'z ko'rsatiladi -> o'zbekchasi so'raladi
                     promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
                 } else {
-                    // Ekranda o'zbekcha so'z chiqadi, o'quvchi inglizchasini yozadi
-                    let uzWordDisplay = (wordObj.uz && wordObj.uz[0]) ? wordObj.uz[0] : wordObj.en;
-                    promptText = "UZ: " + uzWordDisplay + " (Inglizchaga tarjima qiling)";
+                    // O'zbekcha tarjimasi ko'rsatiladi -> inglizchasi so'raladi
+                    let uzDisplay = (wordObj.uz && wordObj.uz[0]) ? wordObj.uz[0] : wordObj.en;
+                    promptText = "UZ: " + uzDisplay + " (Inglizchaga tarjima qiling)";
                 }
 
                 document.getElementById('currentPromptWord').innerText = promptText;
@@ -1292,10 +1299,10 @@
 
             let isCorrect = false;
             if (currentQuestionType === 'en2uz') {
-                // O'quvchi kiritgan matn uz tarjimalar ro'yxatida bormi?
+                // O'quvchi o'zbekcha yozishi kerak, so'z objectining 'uz' massividagilar bilan solishtiramiz
                 isCorrect = wordObj.uz.some(u => u.toLowerCase() === userVal);
             } else {
-                // O'quvchi kiritgan matn en so'ziga tengmi?
+                // O'quvchi inglizcha yozishi kerak, so'z objectining 'en' qiymati bilan solishtiramiz
                 isCorrect = (userVal === wordObj.en.toLowerCase());
             }
 
@@ -1317,6 +1324,7 @@
                 wrongAnswersCount++;
                 saveDB();
                 updateStudentUI();
+                // To'g'ri javobni chiqarish
                 let correctAnsText = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
                 msgEl.innerHTML = `❌ Xato! To'g'risi: <b style="color:#38bdf8;">${correctAnsText}</b>`;
                 msgEl.style.color = "#f87171";
@@ -1429,48 +1437,6 @@
             document.getElementById('reportWords').innerText = totalWords + " ta";
             document.getElementById('reportPercent').innerText = percent + "%";
             updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            let list = document.getElementById('leaderboardList');
-            if(!list) return;
-            list.innerHTML = '';
-            Object.values(studentsDB).sort((a, b) => b.xp - a.xp).forEach((st, index) => {
-                list.innerHTML += `<div class="leaderboard-item ${index === 0 ? 'top-1' : ''}"><div><b>${index + 1}-o'rin.</b> ${st.name}</div><div style="color: #fbbf24; font-weight: 700;">⚡ ${st.xp} XP</div></div>`;
-            });
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
-            document.getElementById(tabId).classList.add('active-tab');
-
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
-                item.classList.remove('active');
-                let ic = item.querySelector('.nav-icon-container');
-                if(ic) ic.classList.remove('active-icon-wrapper');
-            });
-
-            let btnMap = {
-                'tabHome': ['navHome', 'iconHome'],
-                'tabLearn': ['navLearn', 'iconLearn'],
-                'tabTask': ['navTask', 'iconTask'],
-                'tabStudentAssignments': ['navStudentAssignmentsTab', 'iconStudentAssignments'],
-                'tabReport': ['navReport', 'iconReport'],
-                'tabRating': ['navRating', 'iconRating'],
-                'tabAddStudent': ['navAddStudentTab', 'iconAddStudentTab'],
-                'tabUploadAssignment': ['navUploadAssignmentTab', 'iconUploadAssignment'],
-                'tabResults': ['navResultsTab', 'iconResultsTab']
-            };
-
-            if(btnMap[tabId]) {
-                document.getElementById(btnMap[tabId][0]).classList.add('active');
-                document.getElementById(btnMap[tabId][1]).classList.add('active-icon-wrapper');
-            }
-
-            if(tabId === 'tabStudentAssignments') loadStudentAssignments();
-            if(tabId === 'tabUploadAssignment') renderAdminUnitList();
-            if(tabId === 'tabResults') loadAdminTable();
-            window.scrollTo(0, 0);
         }
 
         updateTaskBadge();
