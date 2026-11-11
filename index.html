@@ -793,7 +793,7 @@
                 </div>
             </div>
 
-            <!-- TAB 5: REYTING (Barcha ishlagan natijalardan kelib chiqib) -->
+            <!-- TAB 5: REYTING -->
             <div class="tab-content" id="tabRating">
                 <div class="general-card">
                     <h3>🏆 Reyting Jadvali</h3>
@@ -843,7 +843,7 @@
     </div>
 
     <script>
-        // O'quvchilar bazasi (LocalStorage orqali saqlanadi)
+        // O'quvchilar bazasi (LocalStorage)
         let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {
             "o'quvchi1": { name: "Azizbek", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
         };
@@ -874,7 +874,7 @@
             localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
         }
 
-        // Yangi o'quvchi qo'shish funksiyasi (Faqat admin paneldan ishlaydi)
+        // Yangi o'quvchi qo'shish (Faqat O'qituvchi panelidan)
         function addNewStudent() {
             let name = document.getElementById('newStudentName').value.trim();
             let login = document.getElementById('newStudentLogin').value.trim().toLowerCase();
@@ -926,9 +926,23 @@
                 return;
             }
 
-            // O'quvchi tekshiruvi
-            if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
-                alert("Login yoki parol xato!");
+            // Agar o'quvchi bazada bo'lmasa, avtomatik yangi o'quvchi sifatida ro'yxatdan o'tkazib ochib beradi
+            if (!studentsDB[loginInput]) {
+                studentsDB[loginInput] = {
+                    name: "O'quvchi (" + loginInput + ")",
+                    pass: passInput,
+                    book1: 0,
+                    book2: 0,
+                    xp: 0,
+                    totalCorrect: 0,
+                    totalAttempts: 0
+                };
+                saveDB();
+            }
+
+            // Parolni tekshirish
+            if (studentsDB[loginInput].pass !== passInput) {
+                alert("Parol noto'g'ri!");
                 return;
             }
 
@@ -987,3 +1001,185 @@
             document.getElementById('knowledgePercentTask').innerText = percent + "%";
             document.getElementById('reportWords').innerText = totalWords + " ta";
             document.getElementById('reportPercent').innerText = percent + "%";
+
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            let list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+
+            let sortedStudents = Object.values(studentsDB).sort((a, b) => b.xp - a.xp);
+
+            sortedStudents.forEach((st, index) => {
+                let topClass = index === 0 ? 'top-1' : '';
+                list.innerHTML += `
+                    <div class="leaderboard-item ${topClass}">
+                        <div><b>${index + 1}-o'rin.</b> ${st.name}</div>
+                        <div style="color: #fbbf24; font-weight: 700;">⚡ ${st.xp} XP</div>
+                    </div>
+                `;
+            });
+        }
+
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active-tab'));
+
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active-tab');
+            }
+
+            const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const iconContainer = item.querySelector('.nav-icon-container');
+                if (iconContainer) {
+                    iconContainer.classList.remove('active-icon-wrapper');
+                }
+            });
+
+            let activeNavBtn = document.getElementById('navHome');
+            let activeIconContainer = document.getElementById('iconHome');
+
+            if (tabId === 'tabHome') {
+                activeNavBtn = document.getElementById('navHome');
+                activeIconContainer = document.getElementById('iconHome');
+            } else if (tabId === 'tabLearn') {
+                activeNavBtn = document.getElementById('navLearn');
+                activeIconContainer = document.getElementById('iconLearn');
+            } else if (tabId === 'tabTask') {
+                activeNavBtn = document.getElementById('navTask');
+                activeIconContainer = document.getElementById('iconTask');
+            } else if (tabId === 'tabReport') {
+                activeNavBtn = document.getElementById('navReport');
+                activeIconContainer = document.getElementById('iconReport');
+            } else if (tabId === 'tabRating') {
+                activeNavBtn = document.getElementById('navRating');
+                activeIconContainer = document.getElementById('iconRating');
+                updateLeaderboard();
+            }
+
+            if (activeNavBtn) activeNavBtn.classList.add('active');
+            if (activeIconContainer) activeIconContainer.classList.add('active-icon-wrapper');
+
+            window.scrollTo(0, 0);
+        }
+
+        function startExam(bookNumber) {
+            activeBookNumber = bookNumber;
+            if (bookNumber === 1) {
+                currentActiveWords = book1Words;
+                activeBookTitle = "ESSENTIAL 1";
+            } else {
+                currentActiveWords = book2Words;
+                activeBookTitle = "ESSENTIAL 2";
+            }
+
+            currentIndex = 0;
+            correctAnswersCount = 0;
+            wrongAnswersCount = 0;
+
+            document.getElementById('examSelectionView').style.display = 'none';
+            document.getElementById('examActiveView').style.display = 'flex';
+            document.getElementById('examBookBadge').innerText = activeBookTitle;
+            document.getElementById('taskInputGroup').style.display = 'flex';
+            loadWord();
+        }
+
+        function backToExamSelection() {
+            document.getElementById('examActiveView').style.display = 'none';
+            document.getElementById('examSelectionView').style.display = 'flex';
+        }
+
+        function loadWord() {
+            if (currentIndex < currentActiveWords.length) {
+                currentQuestionType = (currentIndex % 2 === 0) ? 'en2uz' : 'uz2en';
+                
+                let wordObj = currentActiveWords[currentIndex];
+                let promptText = "";
+
+                if (currentQuestionType === 'en2uz') {
+                    promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
+                } else {
+                    promptText = "UZ: " + wordObj.uz[0] + " (Inglizchaga tarjima qiling)";
+                }
+
+                document.getElementById('currentPromptWord').innerText = promptText;
+                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + currentActiveWords.length + " so'z";
+                document.getElementById('userTranslation').value = "";
+                document.getElementById('taskResultMsg').innerText = "";
+                document.getElementById('taskInputGroup').style.display = 'flex';
+            } else {
+                document.getElementById('currentPromptWord').innerText = "🎉 Imtihon Yakunlandi!";
+                document.getElementById('taskInputGroup').style.display = 'none';
+                
+                let resultHTML = `
+                    <div style="font-size: 14px; line-height: 1.6; color: #cbd5e1; margin-top: 5px;">
+                        To'g'ri javoblar: <b style="color: #34d399;">${correctAnswersCount} ta</b><br>
+                        Xato javoblar: <b style="color: #f87171;">${wrongAnswersCount} ta</b><br>
+                        Umumiy natija: <b>${Math.round((correctAnswersCount / currentActiveWords.length) * 100)}%</b>
+                    </div>
+                `;
+                document.getElementById('taskResultMsg').innerHTML = resultHTML;
+            }
+        }
+
+        function checkTranslation() {
+            if (currentIndex >= currentActiveWords.length) return;
+
+            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
+            let wordObj = currentActiveWords[currentIndex];
+            let msgEl = document.getElementById('taskResultMsg');
+
+            if (userVal === "") {
+                alert("Iltimos, tarjimani yozing!");
+                return;
+            }
+
+            let isCorrect = false;
+            if (currentQuestionType === 'en2uz') {
+                isCorrect = wordObj.uz.includes(userVal);
+            } else {
+                isCorrect = (userVal === wordObj.en.toLowerCase());
+            }
+
+            let st = studentsDB[currentStudentId];
+            st.totalAttempts++;
+
+            if (isCorrect) {
+                correctAnswersCount++;
+                st.totalCorrect++;
+                st.xp += 15;
+
+                if (activeBookNumber === 1) {
+                    st.book1++;
+                } else {
+                    st.book2++;
+                }
+                saveDB();
+                updateStudentUI();
+
+                msgEl.innerText = "✅ To'g'ri! Barakalla.";
+                msgEl.style.color = "#34d399";
+                
+                currentIndex++;
+                setTimeout(loadWord, 1500);
+            } else {
+                wrongAnswersCount++;
+                saveDB();
+                updateStudentUI();
+
+                let correctDisplay = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
+                msgEl.innerHTML = `❌ Xato! To'g'ri javob: <b style="color:#38bdf8;">${correctDisplay}</b>`;
+                msgEl.style.color = "#f87171";
+                
+                currentIndex++;
+                setTimeout(loadWord, 2500);
+            }
+        }
+    </script>
+
+</body>
+</html>
