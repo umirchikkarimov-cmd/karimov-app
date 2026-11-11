@@ -18,7 +18,7 @@
             min-height: 100vh;
         }
 
-        /* 1-BOSQICH: LOGIN EKRANI */
+        /* 1. LOGIN EKRANI */
         .login-wrapper {
             position: fixed;
             top: 0;
@@ -94,7 +94,7 @@
             margin-top: 10px;
         }
 
-        /* 2-BOSQICH: DASHBOARD */
+        /* 2. O'QUVCHI DASHBOARD */
         .dashboard-screen {
             display: none;
             width: 100%;
@@ -103,6 +103,50 @@
             align-items: center;
             padding-top: 70px;
             padding-bottom: 90px;
+        }
+
+        /* 3. O'QITUVCHI BOSHQARUV PANELİ */
+        .admin-screen {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .admin-table {
+            width: 100%;
+            background: #121526;
+            border: 1px solid #20253e;
+            border-radius: 16px;
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            border-bottom: 1px solid #1c2138;
+        }
+
+        .admin-table th {
+            background: #1a1e36;
+            color: #c084fc;
+            font-weight: 700;
+        }
+
+        .admin-table td {
+            color: #cbd5e1;
         }
 
         .top-navbar {
@@ -466,6 +510,25 @@
             line-height: 1.5;
         }
 
+        /* Leaderboard list */
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .leaderboard-item {
+            background: #121526;
+            border: 1px solid #20253e;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leaderboard-item.top-1 { border-color: #fbbf24; background: #1a1a2e; }
+
         /* Bottom Nav */
         .bottom-nav {
             position: fixed;
@@ -522,36 +585,65 @@
 </head>
 <body>
 
-    <!-- 1-BOSQICH: LOGIN EKRANI -->
+    <!-- 1. LOGIN EKRANI -->
     <div class="login-wrapper" id="loginScreen">
         <div class="login-card">
             <h2>U.Karimov Ta'lim Platformasiga Xush kelibsiz</h2>
             <p>Shaxsiy kabinetga kirish</p>
             
             <div class="form-group">
-                <input type="text" id="phone" placeholder="Telefon raqam yoki ID">
+                <input type="text" id="phone" placeholder="Telefon raqam yoki ID (masalan: o'quvchi1)">
             </div>
             <div class="form-group">
                 <input type="password" id="password" placeholder="Parol">
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
+            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">O'qituvchi uchun login: <b>admin</b>, parol: <b>admin123</b></p>
         </div>
     </div>
 
-    <!-- 2-BOSQICH: DASHBOARD -->
-    <div class="dashboard-screen" id="dashboardScreen" style="display: none;">
+    <!-- O'QITUVCHI BOSHQARUV PANELI -->
+    <div class="admin-screen" id="adminScreen">
+        <div class="admin-container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px; color: #c084fc;">👨‍🏫 O'qituvchi Boshqaruv Paneli</h2>
+                <button class="btn-back" onclick="logoutAdmin()">Chiqish</button>
+            </div>
+            <div class="general-card">
+                <h3>O'quvchilar Statistikasi</h3>
+                <p>Har bir talabaning Essential kitoblari bo'yicha ishlagan natijalari va o'rgangan so'zlari:</p>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>O'quvchi</th>
+                        <th>Essential 1</th>
+                        <th>Essential 2</th>
+                        <th>Jami So'z</th>
+                        <th>XP</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    <!-- Dinamik to'ldiriladi -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2. O'QUVCHI DASHBOARD -->
+    <div class="dashboard-screen" id="dashboardScreen">
         
         <!-- Header -->
         <div class="top-navbar">
             <div class="brand">
                 <div class="brand-logo">📚</div>
                 <div class="brand-text">
-                    <h1>U.Karimov</h1>
+                    <h1 id="currentStudentName">U.Karimov</h1>
                     <p>Ta'lim Platformasi</p>
                 </div>
             </div>
             <div class="nav-right">
-                <div class="xp-pill">⚡ 1,240 XP</div>
+                <div class="xp-pill" id="headerXp">⚡ 0 XP</div>
                 <div class="role-pill">O'quvchi</div>
             </div>
         </div>
@@ -577,12 +669,12 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
-                        <div class="stat-value" id="learnedWordsCountHome">184 ta</div>
+                        <div class="stat-value" id="learnedWordsCountHome">0 ta</div>
                         <div class="stat-sub">↗ Lug'at topshiriqlari asosida</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
-                        <div class="stat-value">98%</div>
+                        <div class="stat-value" id="knowledgePercent">0%</div>
                         <div class="stat-sub-blue">Faol o'quvchi</div>
                     </div>
                 </div>
@@ -591,6 +683,7 @@
                     <h3>Xush kelibsiz!</h3>
                     <p>Ushbu platforma orqali siz o'z bilimingizni mustahkamlab, yangi so'zlarni o'zlashtirib borishingiz mumkin. Pastdagi menyu orqali boshqa bo'limlarga o'ting.</p>
                 </div>
+                <button class="btn-back" onclick="logoutStudent()" style="margin-top: 10px; width: 100%; text-align: center;">Tizimdan chiqish</button>
             </div>
 
             <!-- TAB 2: O'RGANISH -->
@@ -601,19 +694,19 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">JAMI O'ZLASHTIRILGAN</div>
-                    <div class="stat-value" id="learnedWordsCountLearn">184 ta</div>
+                    <div class="stat-value" id="learnedWordsCountLearn">0 ta</div>
                     <div class="stat-sub">Yaxshi natija!</div>
                 </div>
             </div>
 
-            <!-- TAB 3: IMTIHON / TOPSHIRIQ (Essential 1 va Essential 2) -->
+            <!-- TAB 3: IMTIHON / TOPSHIRIQ -->
             <div class="tab-content" id="tabTask">
                 
                 <!-- 1-Qism: Kitoblar ro'yxati -->
                 <div class="exam-selection-view" id="examSelectionView">
                     <div class="general-card" style="margin-bottom: 4px;">
                         <h3>📝 Imtihon Moduli</h3>
-                        <p>Quyidagi kitoblardan birini tanlang va yozma tarjima imtihonini topshiring. Savollar inglizcha va o'zbekcha bo'lib almashib keladi!</p>
+                        <p>Quyidagi kitoblardan birini tanlang va yozma tarjima imtihonini topshiring. Natijalaringiz 0 dan boshlanib hisoblanib boradi!</p>
                     </div>
 
                     <div class="exam-book-card" onclick="startExam(1)">
@@ -653,12 +746,12 @@
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
-                            <div class="stat-value" id="learnedWordsCountTask">184 ta</div>
+                            <div class="stat-value" id="learnedWordsCountTask">0 ta</div>
                             <div class="stat-sub">↗ Sinov natijalari asosida</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
-                            <div class="stat-value">98%</div>
+                            <div class="stat-value" id="knowledgePercentTask">0%</div>
                             <div class="stat-sub-blue">A'lo darajada</div>
                         </div>
                     </div>
@@ -670,32 +763,30 @@
             <div class="tab-content" id="tabReport">
                 <div class="general-card">
                     <h3>📊 O'quv Hisoboti</h3>
-                    <p>Oxirgi 7 kunlik faolligingiz juda yaxshi. Topshiriqlarni bajarishda xatoliklar kamayib, bilim ko'rsatkichi 98% ga yetdi.</p>
+                    <p>Siz bajargan testlar va umumiy faollik ko'rsatkichlaringiz quyidagicha:</p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-title">BAJARILGAN TOPSHIRIQLAR</div>
-                        <div class="stat-value">24 ta</div>
-                        <div class="stat-sub">Bu hafta</div>
+                        <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                        <div class="stat-value" id="reportWords">0 ta</div>
+                        <div class="stat-sub">Jami to'g'ri javoblar</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">TO'G'RI JAVOBLAR</div>
-                        <div class="stat-value">95%</div>
+                        <div class="stat-title">BILIM DARAJASI</div>
+                        <div class="stat-value" id="reportPercent">0%</div>
                         <div class="stat-sub-blue">Barqaror</div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 5: REYTING -->
+            <!-- TAB 5: REYTING (Barcha ishlagan natijalardan kelib chiqib) -->
             <div class="tab-content" id="tabRating">
                 <div class="general-card">
                     <h3>🏆 Reyting Jadvali</h3>
-                    <p>Siz faol ishtirokchilar orasida yuqori o'rinlarni egallab turibsiz. Reytingda 1-o'ringa chiqish uchun ko'proq topshiriq bajaring!</p>
+                    <p>Barcha o'quvchilarning ishlagan natijalari va XP ballari asosida umumiy reyting:</p>
                 </div>
-                <div class="stat-card" style="border-color: #8b5cf6;">
-                    <div class="stat-title">SIZNING O'RNINGIZ</div>
-                    <div class="stat-value" style="color: #c084fc;">3-o'rin</div>
-                    <div class="stat-sub">⚡ 1,240 XP</div>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <!-- Dinamik to'ldiriladi -->
                 </div>
             </div>
 
@@ -738,6 +829,14 @@
     </div>
 
     <script>
+        // O'quvchilar bazasi va ma'lumotlari (LocalStorage orqali saqlanadi)
+        let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {
+            "o'quvchi1": { name: "O'quvchi 1", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
+            "o'quvchi2": { name: "O'quvchi 2", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
+        };
+
+        let currentStudentId = null;
+
         const book1Words = [
             { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
             { en: "Knowledge", uz: ["bilim"] },
@@ -752,24 +851,127 @@
 
         let currentActiveWords = [];
         let currentIndex = 0;
-        let learnedCount = 184;
         let currentQuestionType = 'en2uz';
+        let activeBookNumber = 1;
         let activeBookTitle = "";
         let correctAnswersCount = 0;
         let wrongAnswersCount = 0;
 
-        function executeLogin() {
-            var phone = document.getElementById('phone').value.trim();
-            var password = document.getElementById('password').value.trim();
+        function saveDB() {
+            localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
+        }
 
-            if (phone === "" || password === "") {
-                alert("Iltimos, ma'lumotlarni kiriting!");
+        function executeLogin() {
+            let loginInput = document.getElementById('phone').value.trim().toLowerCase();
+            let passInput = document.getElementById('password').value.trim();
+
+            if (loginInput === "" || passInput === "") {
+                alert("Iltimos, login va parolni kiriting!");
                 return;
             }
 
+            // O'qituvchi tekshiruvi
+            if (loginInput === "admin" && passInput === "admin123") {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminScreen').style.display = 'flex';
+                loadAdminTable();
+                return;
+            }
+
+            // O'quvchi tekshiruvi (agar mavjud bo'lmasa, avtomatik yangi o'quvchi sifatida ochib beradi)
+            if (!studentsDB[loginInput]) {
+                studentsDB[loginInput] = {
+                    name: loginInput,
+                    pass: passInput,
+                    book1: 0,
+                    book2: 0,
+                    xp: 0,
+                    totalCorrect: 0,
+                    totalAttempts: 0
+                };
+                saveDB();
+            }
+
+            if (studentsDB[loginInput].pass !== passInput) {
+                alert("Parol noto'g'ri!");
+                return;
+            }
+
+            currentStudentId = loginInput;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboardScreen').style.display = 'flex';
+            document.getElementById('currentStudentName').innerText = studentsDB[currentStudentId].name;
+            updateStudentUI();
             window.scrollTo(0, 0);
+        }
+
+        function logoutStudent() {
+            currentStudentId = null;
+            document.getElementById('dashboardScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('phone').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function logoutAdmin() {
+            document.getElementById('adminScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('phone').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function loadAdminTable() {
+            let tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            for (let id in studentsDB) {
+                let st = studentsDB[id];
+                let totalWords = st.book1 + st.book2;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${st.name}</b></td>
+                        <td>${st.book1} ta so'z</td>
+                        <td>${st.book2} ta so'z</td>
+                        <td>${totalWords} ta</td>
+                        <td>⚡ ${st.xp} XP</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateStudentUI() {
+            if (!currentStudentId) return;
+            let st = studentsDB[currentStudentId];
+            let totalWords = st.book1 + st.book2;
+            let percent = st.totalAttempts > 0 ? Math.round((st.totalCorrect / st.totalAttempts) * 100) : 0;
+
+            document.getElementById('headerXp').innerText = "⚡ " + st.xp + " XP";
+            document.getElementById('learnedWordsCountHome').innerText = totalWords + " ta";
+            document.getElementById('learnedWordsCountLearn').innerText = totalWords + " ta";
+            document.getElementById('learnedWordsCountTask').innerText = totalWords + " ta";
+            document.getElementById('knowledgePercent').innerText = percent + "%";
+            document.getElementById('knowledgePercentTask').innerText = percent + "%";
+            document.getElementById('reportWords').innerText = totalWords + " ta";
+            document.getElementById('reportPercent').innerText = percent + "%";
+
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            let list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+
+            // O'quvchilarni XP bo'yicha saralash
+            let sortedStudents = Object.values(studentsDB).sort((a, b) => b.xp - a.xp);
+
+            sortedStudents.forEach((st, index) => {
+                let topClass = index === 0 ? 'top-1' : '';
+                list.innerHTML += `
+                    <div class="leaderboard-item ${topClass}">
+                        <div><b>${index + 1}-o'rin.</b> ${st.name}</div>
+                        <div style="color: #fbbf24; font-weight: 700;">⚡ ${st.xp} XP</div>
+                    </div>
+                `;
+            });
         }
 
         function switchTab(tabId) {
@@ -808,6 +1010,7 @@
             } else if (tabId === 'tabRating') {
                 activeNavBtn = document.getElementById('navRating');
                 activeIconContainer = document.getElementById('iconRating');
+                updateLeaderboard();
             }
 
             if (activeNavBtn) activeNavBtn.classList.add('active');
@@ -817,6 +1020,7 @@
         }
 
         function startExam(bookNumber) {
+            activeBookNumber = bookNumber;
             if (bookNumber === 1) {
                 currentActiveWords = book1Words;
                 activeBookTitle = "ESSENTIAL 1";
@@ -860,7 +1064,6 @@
                 document.getElementById('taskResultMsg').innerText = "";
                 document.getElementById('taskInputGroup').style.display = 'flex';
             } else {
-                // Imtihon tugaganda natijani chiqarish
                 document.getElementById('currentPromptWord').innerText = "🎉 Imtihon Yakunlandi!";
                 document.getElementById('taskInputGroup').style.display = 'none';
                 
@@ -894,20 +1097,32 @@
                 isCorrect = (userVal === wordObj.en.toLowerCase());
             }
 
+            let st = studentsDB[currentStudentId];
+            st.totalAttempts++;
+
             if (isCorrect) {
                 correctAnswersCount++;
+                st.totalCorrect++;
+                st.xp += 15; // Har bir to'g'ri javob uchun XP
+
+                if (activeBookNumber === 1) {
+                    st.book1++;
+                } else {
+                    st.book2++;
+                }
+                saveDB();
+                updateStudentUI();
+
                 msgEl.innerText = "✅ To'g'ri! Barakalla.";
                 msgEl.style.color = "#34d399";
-                learnedCount++;
-                
-                document.getElementById('learnedWordsCountHome').innerText = learnedCount + " ta";
-                document.getElementById('learnedWordsCountLearn').innerText = learnedCount + " ta";
-                document.getElementById('learnedWordsCountTask').innerText = learnedCount + " ta";
                 
                 currentIndex++;
                 setTimeout(loadWord, 1500);
             } else {
                 wrongAnswersCount++;
+                saveDB();
+                updateStudentUI();
+
                 let correctDisplay = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
                 msgEl.innerHTML = `❌ Xato! To'g'ri javob: <b style="color:#38bdf8;">${correctDisplay}</b>`;
                 msgEl.style.color = "#f87171";
