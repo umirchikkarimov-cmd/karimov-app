@@ -875,7 +875,7 @@
                 <div class="admin-sub-section" id="adminSubVocabSection">
                     <div class="general-card">
                         <h3>📖 Lug'at yuklash (Essential 1 & 2 - Unitlar)</h3>
-                        <p>Qaysi kitob va unit uchun lug'at kiritmoqchisiz?</p>
+                        <p>Qaysi kitob va unit uchun inglizcha so'zlarni kiritmoqchisiz? (Har bir qatorda bittadan inglizcha so'z yozing)</p>
                         
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <select id="adminUploadBookSelect" class="task-input" onchange="renderAdminUnitList()">
@@ -885,7 +885,7 @@
                         </div>
 
                         <div id="adminUnitUploadContainer" style="margin-top: 14px;">
-                            <!-- Dinamik unitlar va matn kiritish maydonlari -->
+                            <!-- Dinamik unitlar va faqat inglizcha so'z kiritish maydonlari -->
                         </div>
                     </div>
                 </div>
@@ -986,6 +986,30 @@
     </div>
 
     <script>
+        // Avtomatik lug'at bazasi (Inglizcha so'z kiritilsa, tizim uning tarjimasini avtomatik taniydi)
+        const autoDictionary = {
+            "education": ["ta'lim", "talim", "o'qitish"],
+            "knowledge": ["bilim", "axborot"],
+            "success": ["muvaffaqiyat", "omad"],
+            "book": ["kitob"],
+            "pen": ["ruchka", "qalam"],
+            "water": ["suv"],
+            "apple": ["olma"],
+            "school": ["maktab"],
+            "teacher": ["o'qituvchi", "ustoz"],
+            "student": ["o'quvchi", "talaba"],
+            "read": ["o'qimoq"],
+            "write": ["yozmoq"],
+            "friend": ["do'st"],
+            "family": ["oila"],
+            "house": ["uy"],
+            "car": ["mashina", "avtomobil"],
+            "dog": ["it"],
+            "cat": ["mushuk"],
+            "sun": ["quyosh"],
+            "moon": ["oy"]
+        };
+
         let defaultDB = {
             "ali": { name: "Ali", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
             "mustafo": { name: "Mustafo", pass: "mustafo2003", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
@@ -1010,7 +1034,7 @@
         let activeExamUnit = 1;
 
         const defaultFallbackWords = [
-            { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
+            { en: "Education", uz: ["ta'lim", "talim"] },
             { en: "Knowledge", uz: ["bilim"] },
             { en: "Success", uz: ["muvaffaqiyat", "omad"] }
         ];
@@ -1108,7 +1132,7 @@
 
             for(let u = 1; u <= 20; u++) {
                 let existingData = customUnitsDB[bookVal] && customUnitsDB[bookVal][u];
-                let existingText = existingData ? existingData.map(w => `${w.en} - ${w.uz[0]}`).join('\n') : '';
+                let existingText = existingData ? existingData.map(w => w.en).join('\n') : '';
                 let statusText = existingData ? `<b style="color:#34d399;">✅ (${existingData.length} ta so'z)</b>` : `<b style="color:#64748b;">Bo'sh</b>`;
                 
                 container.innerHTML += `
@@ -1118,7 +1142,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="So'zlarni yozing (Masalan: Apple - Olma) yoki fayl yuklang">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)&#10;Masalan:&#10;apple&#10;book&#10;water">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1140,25 +1164,22 @@
             let parsedWords = [];
 
             lines.forEach(line => {
-                let parts = line.split(/[-–—]/); // Har qanday turdagi chiziqchani qabul qiladi (- or – or —)
-                if(parts.length >= 2) {
-                    parsedWords.push({
-                        en: parts[0].trim(),
-                        uz: [parts[1].trim().toLowerCase()]
-                    });
-                }
-            });
+                let engWord = line.trim();
+                let lowerEng = engWord.toLowerCase();
+                // Tizim avtomatik tarjimasini bazadan oladi, agar yo'q bo'lsa o'zini qo'yadi
+                let uzTranslations = autoDictionary[lowerEng] || [lowerEng];
 
-            if(parsedWords.length === 0) {
-                alert("Iltimos, formatga rioya qiling! Masalan: Apple - Olma");
-                return;
-            }
+                parsedWords.push({
+                    en: engWord,
+                    uz: uzTranslations
+                });
+            });
 
             if(!customUnitsDB[bookNum]) customUnitsDB[bookNum] = {};
             customUnitsDB[bookNum][unitNum] = parsedWords;
             saveUnitsDB();
             renderAdminUnitList();
-            alert(`Essential ${bookNum} - Unit ${unitNum} lug'atlari muvaffaqiyatli saqlandi!`);
+            alert(`Essential ${bookNum} - Unit ${unitNum} so'zlari muvaffaqiyatli saqlandi!`);
         }
 
         function deleteUnitWords(bookNum, unitNum) {
@@ -1207,11 +1228,12 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            if(customUnitsDB[bookNum] && customUnitsDB[bookNum][unitNum] && customUnitsDB[bookNum][unitNum].length > 0) {
-                currentActiveWords = customUnitsDB[bookNum][unitNum];
-            } else {
-                currentActiveWords = defaultFallbackWords;
-            }
+            let wordsList = (customUnitsDB[bookNum] && customUnitsDB[bookNum][unitNum] && customUnitsDB[bookNum][unitNum].length > 0) 
+                ? customUnitsDB[bookNum][unitNum] 
+                : defaultFallbackWords;
+
+            // So'zlarni har safar aralashtirib (random) berish
+            currentActiveWords = [...wordsList].sort(() => Math.random() - 0.5);
 
             currentIndex = 0;
             correctAnswersCount = 0;
@@ -1226,9 +1248,16 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                currentQuestionType = (currentIndex % 2 === 0) ? 'en2uz' : 'uz2en';
+                // Ba'zida inglizchasini so'raydi (en2uz), ba'zida o'zbekchasini (uz2en) aralashtirib
+                currentQuestionType = (Math.random() < 0.5) ? 'en2uz' : 'uz2en';
                 let wordObj = currentActiveWords[currentIndex];
-                let promptText = (currentQuestionType === 'en2uz') ? "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)" : "UZ: " + wordObj.uz[0] + " (Inglizchaga tarjima qiling)";
+                let promptText = "";
+
+                if (currentQuestionType === 'en2uz') {
+                    promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
+                } else {
+                    promptText = "UZ: " + wordObj.uz[0] + " (Inglizchaga tarjima qiling)";
+                }
 
                 document.getElementById('currentPromptWord').innerText = promptText;
                 document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + currentActiveWords.length + " so'z";
@@ -1254,7 +1283,13 @@
 
             if (!userVal) { alert("Tarjima yozing!"); return; }
 
-            let isCorrect = (currentQuestionType === 'en2uz') ? wordObj.uz.includes(userVal) : (userVal === wordObj.en.toLowerCase());
+            let isCorrect = false;
+            if (currentQuestionType === 'en2uz') {
+                isCorrect = wordObj.uz.includes(userVal);
+            } else {
+                isCorrect = (userVal === wordObj.en.toLowerCase());
+            }
+
             let st = studentsDB[currentStudentId];
             st.totalAttempts++;
 
@@ -1273,7 +1308,8 @@
                 wrongAnswersCount++;
                 saveDB();
                 updateStudentUI();
-                msgEl.innerHTML = `❌ Xato! To'g'risi: <b style="color:#38bdf8;">${currentQuestionType === 'en2uz' ? wordObj.uz[0] : wordObj.en}</b>`;
+                let correctAnsText = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
+                msgEl.innerHTML = `❌ Xato! To'g'risi: <b style="color:#38bdf8;">${correctAnsText}</b>`;
                 msgEl.style.color = "#f87171";
                 currentIndex++;
                 setTimeout(loadWord, 2500);
