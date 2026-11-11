@@ -547,7 +547,7 @@
             border-top: 1px solid #1c2138;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             z-index: 100;
         }
@@ -558,10 +558,10 @@
             align-items: center;
             gap: 4px;
             color: #64748b;
-            font-size: 10px;
+            font-size: 9px;
             text-decoration: none;
             font-weight: 600;
-            width: 50px;
+            width: 48px;
             cursor: pointer;
             background: none;
             border: none;
@@ -572,21 +572,21 @@
         }
 
         .nav-icon {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .active-icon-wrapper {
             background: #8b5cf6;
             color: #fff;
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-top: -10px;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
-            font-size: 15px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -784,7 +784,7 @@
                 </div>
             </div>
 
-            <!-- TAB 7: NATIJALAR (O'quvchilar natijasi va o'chirish) -->
+            <!-- TAB 7: NATIJALAR (O'quvchilar natijasi) -->
             <div class="tab-content" id="tabResults">
                 <div class="general-card">
                     <h3>📊 O'quvchilar natijasi</h3>
@@ -805,6 +805,46 @@
                         <!-- Dinamik to'ldiriladi -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- TAB 8: TOPSHIRIQ YUKLASH (Faqat O'qituvchi uchun) -->
+            <div class="tab-content" id="tabUploadAssignment">
+                <div class="general-card">
+                    <h3>📤 Topshiriq Yuklash Bo'limi</h3>
+                    <p>O'quvchilaringiz uchun yangi vazifalar yuboring:</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+                        <div>
+                            <label style="font-size: 11px; color: #a855f7; font-weight: 700; display:block; margin-bottom: 5px;">📖 Lug'at berish / yuklash</label>
+                            <textarea id="teacherVocabInput" class="task-input" rows="3" placeholder="Masalan: Apple - Olma, Book - Kitob..."></textarea>
+                            <button class="btn-purple" style="margin-top: 6px;" onclick="publishAssignment('vocab')">Lug'atni yuborish</button>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 11px; color: #a855f7; font-weight: 700; display:block; margin-bottom: 5px;">✍️ Writing mavzu yuklash</label>
+                            <textarea id="teacherWritingInput" class="task-input" rows="3" placeholder="Masalan: Describe your favorite book..."></textarea>
+                            <button class="btn-purple" style="margin-top: 6px;" onclick="publishAssignment('writing')">Writing mavzuni yuborish</button>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 11px; color: #a855f7; font-weight: 700; display:block; margin-bottom: 5px;">🗣️ Speaking savolini yuklash</label>
+                            <input type="text" id="teacherSpeakingInput" class="task-input" placeholder="Masalan: Talk about your hobby...">
+                            <button class="btn-purple" style="margin-top: 6px;" onclick="publishAssignment('speaking')">Speaking savolini yuborish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun) -->
+            <div class="tab-content" id="tabStudentAssignments">
+                <div class="general-card">
+                    <h3>📋 O'qituvchi yuborgan topshiriqlar</h3>
+                    <p>Sizga berilgan vazifalarni bajaring:</p>
+                </div>
+
+                <div id="studentAssignmentsList" style="display: flex; flex-direction: column; gap: 14px;">
+                    <!-- Dinamik to'ldiriladi -->
+                </div>
             </div>
 
         </div>
@@ -829,6 +869,12 @@
                 </div>
                 <span>Imtihon</span>
             </button>
+            <button class="nav-item" onclick="switchTab('tabStudentAssignments')" id="navStudentAssignmentsTab">
+                <div class="nav-icon-container" id="iconStudentAssignments">
+                    <span class="nav-icon">📋</span>
+                </div>
+                <span>Topshiriq</span>
+            </button>
             <button class="nav-item" onclick="switchTab('tabReport')" id="navReport">
                 <div class="nav-icon-container" id="iconReport">
                     <span class="nav-icon">📊</span>
@@ -847,6 +893,12 @@
                     <span class="nav-icon">➕</span>
                 </div>
                 <span>Qo'shish</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('tabUploadAssignment')" id="navUploadAssignmentTab" style="display: none;">
+                <div class="nav-icon-container" id="iconUploadAssignment">
+                    <span class="nav-icon">📤</span>
+                </div>
+                <span>Topshiriq yuklash</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabResults')" id="navResultsTab" style="display: none;">
                 <div class="nav-icon-container" id="iconResultsTab">
@@ -868,6 +920,11 @@
         let storedDB = JSON.parse(localStorage.getItem('karimov_students_db'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
+
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db')) || [
+            { id: 1, type: 'writing', content: "Describe your favorite book or movie in English.", date: "11-Noyabr" },
+            { id: 2, type: 'vocab', content: "Essential 1 takroriy lug'at vazifasi: Education, Knowledge, Success", date: "11-Noyabr" }
+        ];
 
         let currentStudentId = null;
 
@@ -893,6 +950,10 @@
 
         function saveDB() {
             localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
+        }
+
+        function saveAssignments() {
+            localStorage.setItem('karimov_assignments_db', JSON.stringify(assignmentsDB));
         }
 
         function togglePasswordVisibility() {
@@ -938,6 +999,129 @@
             }
         }
 
+        function publishAssignment(type) {
+            let val = "";
+            if (type === 'vocab') {
+                val = document.getElementById('teacherVocabInput').value.trim();
+                document.getElementById('teacherVocabInput').value = '';
+            } else if (type === 'writing') {
+                val = document.getElementById('teacherWritingInput').value.trim();
+                document.getElementById('teacherWritingInput').value = '';
+            } else if (type === 'speaking') {
+                val = document.getElementById('teacherSpeakingInput').value.trim();
+                document.getElementById('teacherSpeakingInput').value = '';
+            }
+
+            if (!val) {
+                alert("Iltimos, topshiriq mazmunini kiriting!");
+                return;
+            }
+
+            assignmentsDB.unshift({
+                id: Date.now(),
+                type: type,
+                content: val,
+                date: "Bugun"
+            });
+            saveAssignments();
+            alert("Topshiriq o'quvchilarga muvaffaqiyatli yuborildi!");
+        }
+
+        function checkWritingGrammar(assignmentId) {
+            let textInput = document.getElementById('writingText_' + assignmentId).value.trim();
+            let resultBox = document.getElementById('writingResult_' + assignmentId);
+
+            if (!textInput) {
+                alert("Iltimos, matn kiriting!");
+                return;
+            }
+
+            let words = textInput.split(/\s+/).filter(Boolean);
+            let wordCount = words.length;
+            let sentences = textInput.split(/[.!?]+/).filter(Boolean);
+            let sentenceCount = sentences.length;
+
+            // Avtomatik grammatik tahlil va xatolarni aniqlash simulyatsiyasi
+            let errors = [];
+            
+            // Katta harf bilan boshlanishini tekshirish
+            if (textInput.length > 0 && textInput[0] !== textInput[0].toUpperCase()) {
+                errors.push("Jumlaning bosh harfi kichik yozilgan.");
+            }
+
+            // Tinish belgisi bilan tugashini tekshirish
+            let lastChar = textInput[textInput.length - 1];
+            if (lastChar !== '.' && lastChar !== '!' && lastChar !== '?') {
+                errors.push("Matn oxiriga nuqta yoki tinish belgisi qo'yilmagan.");
+            }
+
+            // Qisqa so'zlarni yoki oddiy imlo xatolarini skanerlash
+            words.forEach(w => {
+                if (w.toLowerCase() === "i") {
+                    errors.push("'i' olmoshini doim bosh harf bilan ('I') yozish kerak.");
+                }
+            });
+
+            let score = 100 - (errors.length * 15);
+            if (score < 40) score = 40;
+
+            let feedbackHtml = `
+                <div style="background: #090b16; border: 1px solid #232943; border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 12px;">
+                    <b style="color: #38bdf8;">📝 Avtomatik Grammatika Tekshiruvi Natijasi:</b><br>
+                    • So'zlar soni: <b>${wordCount} ta</b><br>
+                    • Jumlalar soni: <b>${sentenceCount} ta</b><br>
+                    • Baho: <b style="color: #34d399;">${score}%</b><br>
+                    <div style="margin-top: 6px;">
+                        <b style="color: #f472b6;">Anqlangan xatolar / Tavsiyalar:</b>
+                        ${errors.length === 0 ? '<br><span style="color: #34d399;">✅ Ajoyib! Grammatik xatolar topilmadi.</span>' : '<ul style="margin-left: 15px; margin-top: 4px;">' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>'}
+                    </div>
+                </div>
+            `;
+            resultBox.innerHTML = feedbackHtml;
+        }
+
+        function loadStudentAssignments() {
+            let container = document.getElementById('studentAssignmentsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (assignmentsDB.length === 0) {
+                container.innerHTML = `<div class="general-card"><p>Hozircha o'qituvchi tomonidan topshiriqlar berilmagan.</p></div>`;
+                return;
+            }
+
+            assignmentsDB.forEach(item => {
+                let badgeName = item.type === 'vocab' ? '📖 Lug\'at' : (item.type === 'writing' ? '✍️ Writing' : '🗣️ Speaking');
+                let cardHTML = `
+                    <div class="general-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span class="badge-purple">${badgeName}</span>
+                            <span style="font-size: 10px; color: #64748b;">${item.date}</span>
+                        </div>
+                        <p style="font-size: 13px; color: #fff; margin-bottom: 12px;"><b>Mavzu/Vazifa:</b> ${item.content}</p>
+                `;
+
+                if (item.type === 'writing') {
+                    cardHTML += `
+                        <textarea id="writingText_${item.id}" class="task-input" rows="3" placeholder="Insho yoki matningizni shu yerga yozing..."></textarea>
+                        <button class="btn-purple" style="margin-top: 8px;" onclick="checkWritingGrammar(${item.id})">Tekshirish va topshirish</button>
+                        <div id="writingResult_${item.id}"></div>
+                    `;
+                } else if (item.type === 'vocab') {
+                    cardHTML += `
+                        <p style="font-size: 11px; color: #38bdf8;">💡 Yuqoridagi so'zlarni yodlang va Imtihon bo'limida o'zingizni sinang!</p>
+                    `;
+                } else if (item.type === 'speaking') {
+                    cardHTML += `
+                        <p style="font-size: 11px; color: #fbbf24;">🎤 Ushbu mavzu bo'yicha ovozli javobingizni o'qituvchiga taqdim eting.</p>
+                    `;
+                }
+
+                cardHTML += `</div>`;
+                container.innerHTML += cardHTML;
+            });
+        }
+
         function executeLogin() {
             let loginInput = document.getElementById('phone').value.trim().toLowerCase();
             let passInput = document.getElementById('password').value.trim();
@@ -956,7 +1140,9 @@
                 document.getElementById('userRolePill').innerText = "O'qituvchi";
                 document.getElementById('headerXp').style.display = 'none';
                 document.getElementById('navAddStudentTab').style.display = 'flex';
+                document.getElementById('navUploadAssignmentTab').style.display = 'flex';
                 document.getElementById('navResultsTab').style.display = 'flex';
+                document.getElementById('navStudentAssignmentsTab').style.display = 'none';
                 switchTab('tabResults');
                 loadAdminTable();
                 return;
@@ -984,7 +1170,9 @@
             document.getElementById('userRolePill').innerText = "O'quvchi";
             document.getElementById('headerXp').style.display = 'block';
             document.getElementById('navAddStudentTab').style.display = 'none';
+            document.getElementById('navUploadAssignmentTab').style.display = 'none';
             document.getElementById('navResultsTab').style.display = 'none';
+            document.getElementById('navStudentAssignmentsTab').style.display = 'flex';
             updateStudentUI();
             switchTab('tabHome');
             window.scrollTo(0, 0);
@@ -1108,6 +1296,10 @@
             } else if (tabId === 'tabTask') {
                 activeNavBtn = document.getElementById('navTask');
                 activeIconContainer = document.getElementById('iconTask');
+            } else if (tabId === 'tabStudentAssignments') {
+                activeNavBtn = document.getElementById('navStudentAssignmentsTab');
+                activeIconContainer = document.getElementById('iconStudentAssignments');
+                loadStudentAssignments();
             } else if (tabId === 'tabReport') {
                 activeNavBtn = document.getElementById('navReport');
                 activeIconContainer = document.getElementById('iconReport');
@@ -1119,6 +1311,9 @@
             } else if (tabId === 'tabAddStudent') {
                 activeNavBtn = document.getElementById('navAddStudentTab');
                 activeIconContainer = document.getElementById('iconAddStudentTab');
+            } else if (tabId === 'tabUploadAssignment') {
+                activeNavBtn = document.getElementById('navUploadAssignmentTab');
+                activeIconContainer = document.getElementById('iconUploadAssignment');
             } else if (tabId === 'tabResults') {
                 activeNavBtn = document.getElementById('navResultsTab');
                 activeIconContainer = document.getElementById('iconResultsTab');
