@@ -167,4 +167,360 @@
             flex: 1;
             background: rgba(15, 23, 42, 0.6);
             color: #38bdf8;
-            border: 1px
+            border: 1px solid #1e293b;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* PIN Panel */
+        .pin-panel {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pin-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pin-icon {
+            background: #1e1b4b;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a855f7;
+        }
+
+        .pin-text h3 {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pin-text p {
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .pin-right {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pin-input {
+            width: 70px;
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            font-size: 11px;
+            outline: none;
+        }
+
+        .btn-pin {
+            background: #7c3aed;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .stat-title {
+            font-size: 9px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-sub {
+            font-size: 10px;
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        .stat-sub-gray {
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        /* Exams */
+        .section-header {
+            margin-top: 4px;
+        }
+
+        .section-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-header p {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .exam-card {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exam-tags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .tag {
+            background: #3b0764;
+            color: #c084fc;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .tag-blue {
+            background: #0c4a6e;
+            color: #38bdf8;
+        }
+
+        .pin-lbl {
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .exam-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .exam-meta {
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .btn-start {
+            background: #7c3aed;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #0d0f1d;
+            border-top: 1px solid #1a1e36;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #64748b;
+            font-size: 9px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-item.active {
+            color: #a855f7;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+        }
+
+        .active-icon {
+            background: #7c3aed;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="top-navbar">
+        <div class="brand">
+            <div class="brand-logo">📚</div>
+            <div class="brand-text">
+                <h1>U.Karimov</h1>
+                <p>Ta'lim Platformasi</p>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="xp-pill">⚡ 1,240 XP</div>
+            <div class="role-pill">O'quvchi</div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="main-container">
+
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <div class="hero-header">
+                <span class="badge-purple">Kunlik Vazifa</span>
+                <span class="hero-date">10-Noyabr</span>
+            </div>
+            <h2 class="hero-title">Bilimni o'yinga va reytingga <span>aylantiring!</span></h2>
+            <p class="hero-desc">Bugun 20 ta yangi lug'at yodlang va Anti-Cheat imtihonida o'z bilimlaringizni halol topshirib reytingda 1-o'ringa chiqing!</p>
+            <div class="hero-btns">
+                <button class="btn-purple">📖 O'rganishni Boshlash</button>
+                <button class="btn-outline">🛡️ Imtihon Topshiriq</button>
+            </div>
+        </div>
+
+        <!-- PIN Panel -->
+        <div class="pin-panel">
+            <div class="pin-left">
+                <div class="pin-icon">🔑</div>
+                <div class="pin-text">
+                    <h3>PIN-Kod bilan kirish</h3>
+                    <p>O'qituvchi bergan kodni kiriting</p>
+                </div>
+            </div>
+            <div class="pin-right">
+                <input type="text" class="pin-input" placeholder="849201">
+                <button class="btn-pin">Kirish</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                <div class="stat-value">184 ta</div>
+                <div class="stat-sub">↗ +12 ta bu hafta</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">HALOLLIK KO'RSATKICHI</div>
+                <div class="stat-value">98%</div>
+                <div class="stat-sub-gray">0 ta cheat holati</div>
+            </div>
+        </div>
+
+        <!-- Exam Section -->
+        <div class="section-header">
+            <h3>🛡️ Xavfsiz Imtihonlar</h3>
+            <p>Oyna o'zgartirish va copy-paste taqiqlangan</p>
+        </div>
+
+        <div class="exam-card">
+            <div>
+                <div class="exam-tags">
+                    <span class="tag">VOCABULARY</span>
+                    <span class="pin-lbl">PIN: 849201</span>
+                </div>
+                <div class="exam-title">IELTS Band 7+ Words</div>
+                <div class="exam-meta">5 savol • 25s taymer</div>
+            </div>
+            <button class="btn-start">Boshlash ▷</button>
+        </div>
+
+        <div class="exam-card">
+            <div>
+                <div class="exam-tags">
+                    <span class="tag tag-blue">GRAMMAR</span>
+                    <span class="pin-lbl">PIN: 182938</span>
+                </div>
+                <div class="exam-title">Essential Grammar Challenge</div>
+                <div class="exam-meta">4 savol • 30s taymer</div>
+            </div>
+            <button class="btn-start">Boshlash ▷</button>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>Bo'sh sahifa</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📖</span>
+            <span>O'rganish</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <div class="active-icon">🛡️</div>
+            <span>Imtihon</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Hisobot</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🏆</span>
+            <span>Reyting</span>
+        </a>
+    </div>
+
+</body>
+</html>
