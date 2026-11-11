@@ -178,6 +178,18 @@
             gap: 14px;
         }
 
+        /* Sahifalar kontenti uchun qismlar */
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .tab-content.active-tab {
+            display: flex;
+        }
+
         /* Banner */
         .hero-card {
             background: linear-gradient(180deg, #2a1147 0%, #150d2e 100%);
@@ -296,7 +308,7 @@
             font-weight: 600;
         }
 
-        /* Yozma Tarjima Topshiriq Paneli (Imtihon o'rnida) */
+        /* Yozma Tarjima Topshiriq Paneli */
         .task-card {
             background: #121526;
             border: 1px solid #20253e;
@@ -370,7 +382,28 @@
             font-weight: 600;
         }
 
-        /* Bottom Nav - Ixcham va to'g'ri joylashuv */
+        /* Extra Sections for other tabs */
+        .general-card {
+            background: #121526;
+            border: 1px solid #20253e;
+            border-radius: 16px;
+            padding: 18px;
+        }
+
+        .general-card h3 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #f472b6;
+        }
+
+        .general-card p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -378,224 +411,4 @@
             right: 0;
             height: 65px;
             background: #0d0f1c;
-            border-top: 1px solid #1c2138;
-            display: flex;
-            justify-content: center;
-            gap: 28px;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: #64748b;
-            font-size: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            width: 55px;
-        }
-
-        .nav-item.active {
-            color: #c084fc;
-        }
-
-        .nav-icon {
-            font-size: 18px;
-        }
-
-        .active-icon {
-            background: #8b5cf6;
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -12px;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 1-BOSQICH: LOGIN EKRANI -->
-    <div class="login-wrapper" id="loginScreen">
-        <div class="login-card">
-            <h2>U.Karimov Ta'lim Platformasiga Xush kelibsiz</h2>
-            <p>Shaxsiy kabinetga kirish</p>
-            
-            <div class="form-group">
-                <input type="tel" id="phone" placeholder="Telefon raqam (+998...)">
-            </div>
-            <div class="form-group">
-                <input type="password" id="password" placeholder="Parol">
-            </div>
-            <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-        </div>
-    </div>
-
-    <!-- 2-BOSQICH: DASHBOARD -->
-    <div class="dashboard-screen" id="dashboardScreen">
-        
-        <!-- Header -->
-        <div class="top-navbar">
-            <div class="brand">
-                <div class="brand-logo">📚</div>
-                <div class="brand-text">
-                    <h1>U.Karimov</h1>
-                    <p>Ta'lim Platformasi</p>
-                </div>
-            </div>
-            <div class="nav-right">
-                <div class="xp-pill">⚡ 1,240 XP</div>
-                <div class="role-pill">O'quvchi</div>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="main-container">
-
-            <!-- Hero Banner -->
-            <div class="hero-card">
-                <div class="hero-header">
-                    <span class="badge-purple">Kunlik Vazifa</span>
-                    <span class="hero-date">10-Noyabr</span>
-                </div>
-                <h2 class="hero-title">Bilimingizni <span>topshiriqlar orqali rivojlantiring!</span></h2>
-                <p class="hero-desc">Bugungi lug'at va topshiriqlarni bajarib, bilim darajangizni oshiring va reytingda yuqoriga ko'tariling!</p>
-                <div class="hero-btns">
-                    <button class="btn-purple">📖 O'rganishni Boshlash</button>
-                    <button class="btn-outline">📝 Topshiriq bajarish</button>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
-                    <div class="stat-value" id="learnedWordsCount">184 ta</div>
-                    <div class="stat-sub">↗ To'g'ri ishlanganlar asosida</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
-                    <div class="stat-value">98%</div>
-                    <div class="stat-sub-blue">Faol o'quvchi</div>
-                </div>
-            </div>
-
-            <!-- Yozma Tarjima Topshiriq Bo'limi -->
-            <div class="task-card">
-                <div class="task-header">
-                    <span class="word-badge">TARJIMA TOPSHIRIG'I</span>
-                    <span class="word-counter" id="wordProgress">1 / 3 so'z</span>
-                </div>
-                <div class="target-word" id="currentEnglishWord">Education</div>
-                <div class="task-input-group">
-                    <input type="text" class="task-input" id="userTranslation" placeholder="O'zbekcha tarjimasini yozing...">
-                    <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
-                </div>
-                <div class="task-result" id="taskResultMsg"></div>
-            </div>
-
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <a href="#" class="nav-item">
-                <span class="nav-icon">🏠</span>
-                <span>Bo'sh sahifa</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="nav-icon">📖</span>
-                <span>O'rganish</span>
-            </a>
-            <a href="#" class="nav-item active">
-                <div class="active-icon">📝</div>
-                <span>Topshiriq</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="nav-icon">📊</span>
-                <span>Hisobot</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="nav-icon">🏆</span>
-                <span>Reyting</span>
-            </a>
-        </div>
-
-    </div>
-
-    <script>
-        const vocabularyList = [
-            { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
-            { en: "Knowledge", uz: ["bilim"] },
-            { en: "Success", uz: ["muvaffaqiyat", "omad"] }
-        ];
-
-        let currentIndex = 0;
-        let learnedCount = 184;
-
-        function executeLogin() {
-            var phone = document.getElementById('phone').value.trim();
-            var password = document.getElementById('password').value.trim();
-
-            if (phone === "" || password === "") {
-                alert("Iltimos, telefon raqam va parolni kiriting!");
-                return;
-            }
-
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboardScreen').style.display = 'flex';
-            window.scrollTo(0, 0);
-            loadWord();
-        }
-
-        function loadWord() {
-            if (currentIndex < vocabularyList.length) {
-                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
-                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
-                document.getElementById('userTranslation').value = "";
-                document.getElementById('taskResultMsg').innerText = "";
-            } else {
-                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
-                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
-                document.getElementById('taskResultMsg').style.color = "#34d399";
-            }
-        }
-
-        function checkTranslation() {
-            if (currentIndex >= vocabularyList.length) return;
-
-            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
-            let validAnswers = vocabularyList[currentIndex].uz;
-            let msgEl = document.getElementById('taskResultMsg');
-
-            if (userVal === "") {
-                alert("Iltimos, tarjimani yozing!");
-                return;
-            }
-
-            let isCorrect = validAnswers.includes(userVal);
-
-            if (isCorrect) {
-                msgEl.innerText = "✅ To'g'ri! Barakalla.";
-                msgEl.style.color = "#34d399";
-                learnedCount++;
-                document.getElementById('learnedWordsCount').innerText = learnedCount + " ta";
-                
-                currentIndex++;
-                setTimeout(loadWord, 1500);
-            } else {
-                msgEl.innerText = "❌ Xato! Qaytadan urinib ko'ring.";
-                msgEl.style.color = "#f87171";
-            }
-        }
-    </script>
-
-</body>
-</html>
+            border-top:
