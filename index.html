@@ -311,7 +311,68 @@
             font-weight: 600;
         }
 
-        /* Yozma Tarjima Topshiriq Paneli */
+        /* Imtihon kartochkalari (Essential 1 va 2) */
+        .exam-selection-view, .exam-active-view {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .exam-book-card {
+            background: #121526;
+            border: 1px solid #20253e;
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .exam-book-card:hover {
+            border-color: #8b5cf6;
+            background: #171b30;
+        }
+
+        .exam-book-info h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .exam-book-info p {
+            font-size: 11px;
+            color: #8b9bb4;
+        }
+
+        .btn-start-exam {
+            background: #8b5cf6;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-back {
+            background: #111a2e;
+            color: #94a3b8;
+            border: 1px solid #1e2d4a;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            align-self: flex-start;
+            margin-bottom: 4px;
+        }
+
+        /* Yozma Tarjima Paneli */
         .task-card {
             background: #121526;
             border: 1px solid #20253e;
@@ -342,9 +403,9 @@
         }
 
         .target-word {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
-            color: #fff;
+            color: #f472b6;
             margin-bottom: 14px;
         }
 
@@ -478,7 +539,7 @@
     </div>
 
     <!-- 2-BOSQICH: DASHBOARD -->
-    <div class="dashboard-screen" id="dashboardScreen">
+    <div class="dashboard-screen" id="dashboardScreen" style="display: none;">
         
         <!-- Header -->
         <div class="top-navbar">
@@ -545,33 +606,64 @@
                 </div>
             </div>
 
-            <!-- TAB 3: IMTIHON / TOPSHIRIQ (Yozma Tarjima Moduli) -->
+            <!-- TAB 3: IMTIHON / TOPSHIRIQ (Essential 1 va Essential 2 Yozma Test Moduli) -->
             <div class="tab-content" id="tabTask">
-                <div class="task-card">
-                    <div class="task-header">
-                        <span class="word-badge">YOZMA TARJIMA IMTIHONI</span>
-                        <span class="word-counter" id="wordProgress">1 / 3 so'z</span>
+                
+                <!-- 1-Qism: Kitoblar ro'yxati -->
+                <div class="exam-selection-view" id="examSelectionView">
+                    <div class="general-card" style="margin-bottom: 4px;">
+                        <h3>📝 Imtihon Moduli</h3>
+                        <p>Quyidagi kitoblardan birini tanlang va yozma tarjima imtihonini topshiring. Savollar inglizcha va o'zbekcha bo'lib almashib keladi!</p>
                     </div>
-                    <div class="target-word" id="currentEnglishWord">Education</div>
-                    <div class="task-input-group">
-                        <input type="text" class="task-input" id="userTranslation" placeholder="O'zbekcha tarjimasini yozing...">
-                        <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
+
+                    <div class="exam-book-card" onclick="startExam(1)">
+                        <div class="exam-book-info">
+                            <h3>Essential 1-kitobi lug'atlari</h3>
+                            <p>Asosiy so'zlar bo'yicha yozma test</p>
+                        </div>
+                        <button class="btn-start-exam">Boshlash ➔</button>
                     </div>
-                    <div class="task-result" id="taskResultMsg"></div>
+
+                    <div class="exam-book-card" onclick="startExam(2)">
+                        <div class="exam-book-info">
+                            <h3>Essential 2-kitobi lug'atlari</h3>
+                            <p>Kengaytirilgan so'zlar bo'yicha yozma test</p>
+                        </div>
+                        <button class="btn-start-exam">Boshlash ➔</button>
+                    </div>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
-                        <div class="stat-value" id="learnedWordsCountTask">184 ta</div>
-                        <div class="stat-sub">↗ Lug'at natijalari asosida</div>
+                <!-- 2-Qism: Test jarayoni -->
+                <div class="exam-active-view" id="examActiveView" style="display: none;">
+                    <button class="btn-back" onclick="backToExamSelection()">← Orqaga qaytish</button>
+                    
+                    <div class="task-card">
+                        <div class="task-header">
+                            <span class="word-badge" id="examBookBadge">ESSENTIAL 1</span>
+                            <span class="word-counter" id="wordProgress">1 / 3 so'z</span>
+                        </div>
+                        <div class="target-word" id="currentPromptWord">Education</div>
+                        <div class="task-input-group">
+                            <input type="text" class="task-input" id="userTranslation" placeholder="Tarjimasini yozing...">
+                            <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
+                        </div>
+                        <div class="task-result" id="taskResultMsg"></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
-                        <div class="stat-value">98%</div>
-                        <div class="stat-sub-blue">A'lo darajada</div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                            <div class="stat-value" id="learnedWordsCountTask">184 ta</div>
+                            <div class="stat-sub">↗ Sinov natijalari asosida</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
+                            <div class="stat-value">98%</div>
+                            <div class="stat-sub-blue">A'lo darajada</div>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- TAB 4: HISOBOT -->
@@ -646,14 +738,24 @@
     </div>
 
     <script>
-        const vocabularyList = [
+        // Essential kitoblari bo'yicha lug'atlar bazasi
+        const book1Words = [
             { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
             { en: "Knowledge", uz: ["bilim"] },
             { en: "Success", uz: ["muvaffaqiyat", "omad"] }
         ];
 
+        const book2Words = [
+            { en: "Development", uz: ["rivojlanish", "taraqqiyot"] },
+            { en: "Environment", uz: ["atrof-muhit", "muhit"] },
+            { en: "Invention", uz: ["ixtiro"] }
+        ];
+
+        let currentActiveWords = [];
         let currentIndex = 0;
         let learnedCount = 184;
+        let currentQuestionType = 'en2uz'; // 'en2uz' yoki 'uz2en'
+        let activeBookTitle = "";
 
         function executeLogin() {
             var phone = document.getElementById('phone').value.trim();
@@ -667,7 +769,6 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboardScreen').style.display = 'flex';
             window.scrollTo(0, 0);
-            loadWord();
         }
 
         function switchTab(tabId) {
@@ -714,24 +815,57 @@
             window.scrollTo(0, 0);
         }
 
+        function startExam(bookNumber) {
+            if (bookNumber === 1) {
+                currentActiveWords = book1Words;
+                activeBookTitle = "ESSENTIAL 1";
+            } else {
+                currentActiveWords = book2Words;
+                activeBookTitle = "ESSENTIAL 2";
+            }
+
+            currentIndex = 0;
+            document.getElementById('examSelectionView').style.display = 'none';
+            document.getElementById('examActiveView').style.display = 'flex';
+            document.getElementById('examBookBadge').innerText = activeBookTitle;
+            loadWord();
+        }
+
+        function backToExamSelection() {
+            document.getElementById('examActiveView').style.display = 'none';
+            document.getElementById('examSelectionView').style.display = 'flex';
+        }
+
         function loadWord() {
-            if (currentIndex < vocabularyList.length) {
-                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
-                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
+            if (currentIndex < currentActiveWords.length) {
+                // Inglizcha va o'zbekcha savollarni navbatma-navbat yoki tasodifiy almashtirish
+                currentQuestionType = (currentIndex % 2 === 0) ? 'en2uz' : 'uz2en';
+                
+                let wordObj = currentActiveWords[currentIndex];
+                let promptText = "";
+
+                if (currentQuestionType === 'en2uz') {
+                    promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
+                } else {
+                    promptText = "UZ: " + wordObj.uz[0] + " (Inglizchaga tarjima qiling)";
+                }
+
+                document.getElementById('currentPromptWord').innerText = promptText;
+                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + currentActiveWords.length + " so'z";
                 document.getElementById('userTranslation').value = "";
                 document.getElementById('taskResultMsg').innerText = "";
             } else {
-                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
-                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
+                document.getElementById('currentPromptWord').innerText = "Tabriklaymiz!";
+                document.getElementById('taskResultMsg').innerText = "Barcha savollarni muvaffaqiyatli yakunladingiz!";
                 document.getElementById('taskResultMsg').style.color = "#34d399";
             }
         }
 
         function checkTranslation() {
-            if (currentIndex >= vocabularyList.length) return;
+            if (currentIndex >= currentActiveWords.length) return;
 
             let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
-            let validAnswers = vocabularyList[currentIndex].uz;
+            let wordObj = currentActiveWords[currentIndex];
             let msgEl = document.getElementById('taskResultMsg');
 
             if (userVal === "") {
@@ -739,7 +873,12 @@
                 return;
             }
 
-            let isCorrect = validAnswers.includes(userVal);
+            let isCorrect = false;
+            if (currentQuestionType === 'en2uz') {
+                isCorrect = wordObj.uz.includes(userVal);
+            } else {
+                isCorrect = (userVal === wordObj.en.toLowerCase());
+            }
 
             if (isCorrect) {
                 msgEl.innerText = "✅ To'g'ri! Barakalla.";
