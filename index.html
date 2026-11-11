@@ -765,9 +765,9 @@
                     <h3>➕ O'quvchilarni qo'shish</h3>
                     <p>Yangi o'quvchi ma'lumotlarini kiriting:</p>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                        <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O (masalan: Mustafo)" class="task-input">
-                        <input type="text" id="newStudentLogin" placeholder="Login (masalan: mustafo)" class="task-input">
-                        <input type="text" id="newStudentPass" placeholder="Parol (masalan: mustafo2003)" class="task-input">
+                        <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O (masalan: Odil)" class="task-input">
+                        <input type="text" id="newStudentLogin" placeholder="Login (masalan: odil)" class="task-input">
+                        <input type="text" id="newStudentPass" placeholder="Parol (masalan: odil2002)" class="task-input">
                         <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
                     </div>
                 </div>
@@ -848,11 +848,16 @@
     </div>
 
     <script>
-        // Boshlang'ich ma'lumotlar bazasi (Mustafo va Ali avtomatik kiritilgan)
-        let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {
+        // Boshlang'ich baza (Odil, Mustafo va Ali avtomatik qo'shilgan)
+        let defaultDB = {
             "ali": { name: "Ali", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
-            "mustafo": { name: "Mustafo", pass: "mustafo2003", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
+            "mustafo": { name: "Mustafo", pass: "mustafo2003", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
+            "odil": { name: "Odil", pass: "odil2002", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
         };
+
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db'));
+        let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
+        saveDB();
 
         let currentStudentId = null;
 
@@ -895,11 +900,6 @@
                 return;
             }
 
-            if (studentsDB[login]) {
-                alert("Bu login allaqachon mavjud!");
-                return;
-            }
-
             studentsDB[login] = {
                 name: name,
                 pass: pass,
@@ -916,7 +916,7 @@
             document.getElementById('newStudentName').value = '';
             document.getElementById('newStudentLogin').value = '';
             document.getElementById('newStudentPass').value = '';
-            alert("O'quvchi muvaffaqiyatli qo'shildi!");
+            alert("O'quvchi muvaffaqiyatli qo'shildi va bazaga saqlandi!");
         }
 
         function executeLogin() {
@@ -943,7 +943,12 @@
                 return;
             }
 
-            // O'quvchi tekshiruvi
+            // O'quvchi tekshiruvi (Har safar bazani yangilab tekshiramiz)
+            let currentStored = JSON.parse(localStorage.getItem('karimov_students_db'));
+            if (currentStored) {
+                studentsDB = { ...defaultDB, ...currentStored };
+            }
+
             if (!studentsDB[loginInput]) {
                 alert("Bunday o'quvchi topilmadi! Iltimos, o'qituvchingizdan login oling.");
                 return;
@@ -976,6 +981,11 @@
         }
 
         function loadAdminTable() {
+            let currentStored = JSON.parse(localStorage.getItem('karimov_students_db'));
+            if (currentStored) {
+                studentsDB = { ...defaultDB, ...currentStored };
+            }
+
             let tbody = document.getElementById('adminTableBody');
             if(!tbody) return;
             tbody.innerHTML = '';
@@ -996,6 +1006,10 @@
 
         function updateStudentUI() {
             if (!currentStudentId || currentStudentId === 'ukarimov_admin') return;
+            let currentStored = JSON.parse(localStorage.getItem('karimov_students_db'));
+            if (currentStored && currentStored[currentStudentId]) {
+                studentsDB[currentStudentId] = currentStored[currentStudentId];
+            }
             let st = studentsDB[currentStudentId];
             if (!st) return;
             let totalWords = st.book1 + st.book2;
@@ -1070,6 +1084,7 @@
             if (tabId === 'tabHome') {
                 activeNavBtn = document.getElementById('navHome');
                 activeIconContainer = document.getElementById('iconHome');
+                updateStudentUI();
             } else if (tabId === 'tabLearn') {
                 activeNavBtn = document.getElementById('navLearn');
                 activeIconContainer = document.getElementById('iconLearn');
@@ -1079,6 +1094,7 @@
             } else if (tabId === 'tabReport') {
                 activeNavBtn = document.getElementById('navReport');
                 activeIconContainer = document.getElementById('iconReport');
+                updateStudentUI();
             } else if (tabId === 'tabRating') {
                 activeNavBtn = document.getElementById('navRating');
                 activeIconContainer = document.getElementById('iconRating');
