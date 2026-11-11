@@ -145,6 +145,17 @@
             color: #cbd5e1;
         }
 
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         .top-navbar {
             position: fixed;
             top: 0;
@@ -731,8 +742,8 @@
             <!-- TAB 4: HISOBOT -->
             <div class="tab-content" id="tabReport">
                 <div class="general-card">
-                    <h3>📊 O'quv Hisoboti</h3>
-                    <p>Siz bajargan testlar va umumiy faollik ko'rsatkichlaringiz quyidagicha:</p>
+                    <h3>📊 Shaxsiy O'quv Hisoboti</h3>
+                    <p>Sizning shaxsiy natijalaringiz va ko'rsatkichlaringiz quyidagicha:</p>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -765,19 +776,19 @@
                     <h3>➕ O'quvchilarni qo'shish</h3>
                     <p>Yangi o'quvchi ma'lumotlarini kiriting:</p>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                        <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O (masalan: Odil)" class="task-input">
-                        <input type="text" id="newStudentLogin" placeholder="Login (masalan: odil)" class="task-input">
-                        <input type="text" id="newStudentPass" placeholder="Parol (masalan: odil2002)" class="task-input">
+                        <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
+                        <input type="text" id="newStudentLogin" placeholder="Login" class="task-input">
+                        <input type="text" id="newStudentPass" placeholder="Parol" class="task-input">
                         <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 7: NATIJALAR (O'quvchilar natijasi) -->
+            <!-- TAB 7: NATIJALAR (O'quvchilar natijasi va o'chirish) -->
             <div class="tab-content" id="tabResults">
                 <div class="general-card">
                     <h3>📊 O'quvchilar natijasi</h3>
-                    <p>Har bir o'quvchining kitoblar bo'yicha ko'rsatkichlari:</p>
+                    <p>Har bir o'quvchining kitoblar bo'yicha ko'rsatkichlari va ularni boshqarish:</p>
                 </div>
 
                 <table class="admin-table">
@@ -786,8 +797,8 @@
                             <th>O'quvchi</th>
                             <th>Essential 1</th>
                             <th>Essential 2</th>
-                            <th>Jami</th>
                             <th>XP</th>
+                            <th>Amal</th>
                         </tr>
                     </thead>
                     <tbody id="adminTableBody">
@@ -848,7 +859,6 @@
     </div>
 
     <script>
-        // Boshlang'ich baza (Odil, Mustafo va Ali avtomatik qo'shilgan)
         let defaultDB = {
             "ali": { name: "Ali", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
             "mustafo": { name: "Mustafo", pass: "mustafo2003", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
@@ -916,7 +926,16 @@
             document.getElementById('newStudentName').value = '';
             document.getElementById('newStudentLogin').value = '';
             document.getElementById('newStudentPass').value = '';
-            alert("O'quvchi muvaffaqiyatli qo'shildi va bazaga saqlandi!");
+            alert("O'quvchi muvaffaqiyatli qo'shildi!");
+        }
+
+        function deleteStudent(loginKey) {
+            if (confirm(`Haqiqatan ham "${studentsDB[loginKey].name}" o'quvchisini o'chirmoqchimisiz?`)) {
+                delete studentsDB[loginKey];
+                saveDB();
+                loadAdminTable();
+                updateLeaderboard();
+            }
         }
 
         function executeLogin() {
@@ -943,7 +962,6 @@
                 return;
             }
 
-            // O'quvchi tekshiruvi (Har safar bazani yangilab tekshiramiz)
             let currentStored = JSON.parse(localStorage.getItem('karimov_students_db'));
             if (currentStored) {
                 studentsDB = { ...defaultDB, ...currentStored };
@@ -991,14 +1009,13 @@
             tbody.innerHTML = '';
             for (let id in studentsDB) {
                 let st = studentsDB[id];
-                let totalWords = st.book1 + st.book2;
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id} | Parol: ${st.pass}</span></td>
-                        <td>${st.book1} ta so'z</td>
-                        <td>${st.book2} ta so'z</td>
-                        <td>${totalWords} ta</td>
+                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id}</span></td>
+                        <td>${st.book1} ta</td>
+                        <td>${st.book2} ta</td>
                         <td>⚡ ${st.xp} XP</td>
+                        <td><button class="btn-delete" onclick="deleteStudent('${id}')">O'chirish</button></td>
                     </tr>
                 `;
             }
