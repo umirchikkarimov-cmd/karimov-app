@@ -722,7 +722,7 @@
             <div class="tab-content" id="tabTask">
                 
                 <!-- 1-Qism: Kitoblar ro'yxati -->
-                <div class="exam-selection-view" id="examSelectionView">
+                <div class="exam-selection-view" id="examSelectionView" style="display: flex;">
                     <div class="general-card" style="margin-bottom: 4px;">
                         <h3>📝 Imtihon Moduli</h3>
                         <p>Quyidagi kitoblardan birini tanlang va unit bo'yicha yozma tarjima imtihonini topshiring!</p>
@@ -986,7 +986,7 @@
     </div>
 
     <script>
-        // Kengaytirilgan va aniq tarjimalar lug'ati (Inglizcha -> O'zbekcha)
+        // Standart lug'at bazasi
         const autoDictionary = {
             "middle": ["o'rta", "ortacha", "o'rtada"],
             "word": ["so'z", "soz"],
@@ -1022,8 +1022,7 @@
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        // Yangi versiya kalitidan foydalanib eski xatolarni tozalaymiz
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_v3')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_v4')) || {
             1: { 1: [
                 { en: "middle", uz: ["o'rta", "ortacha"] },
                 { en: "word", uz: ["so'z", "soz"] },
@@ -1058,7 +1057,7 @@
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_custom_units_v3', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_custom_units_v4', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
@@ -1150,7 +1149,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)&#10;Masalan:&#10;middle&#10;word&#10;education">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1172,7 +1171,6 @@
             let parsedWords = [];
 
             lines.forEach(line => {
-                // Agar o'qituvchi "English - O'zbekcha" formatida yozgan bo'lsa yoki faqat inglizcha
                 let parts = line.split(/[-–—]/);
                 let eng = parts[0].trim().toLowerCase();
                 let uzTr = parts.length > 1 ? [parts[1].trim().toLowerCase()] : null;
@@ -1213,9 +1211,11 @@
             alert("Muvaffaqiyatli yuborildi!");
         }
 
+        // --- IMTIHON MODULINI BOSHQARISH (TUGMALAR ISHLASHINI KAFOLATLOVCHI FUNKSIYALAR) ---
         function openExamUnits(bookNum) {
             activeExamBook = bookNum;
             document.getElementById('examSelectionView').style.display = 'none';
+            document.getElementById('examActiveView').style.display = 'none';
             document.getElementById('examUnitSelectionView').style.display = 'flex';
             document.getElementById('examBookTitleHeader').innerText = `Essential ${bookNum} - Unitni tanlang`;
 
@@ -1228,11 +1228,13 @@
 
         function backToBookSelection() {
             document.getElementById('examUnitSelectionView').style.display = 'none';
+            document.getElementById('examActiveView').style.display = 'none';
             document.getElementById('examSelectionView').style.display = 'flex';
         }
 
         function backToUnitSelection() {
             document.getElementById('examActiveView').style.display = 'none';
+            document.getElementById('examSelectionView').style.display = 'none';
             document.getElementById('examUnitSelectionView').style.display = 'flex';
         }
 
@@ -1251,6 +1253,7 @@
             wrongAnswersCount = 0;
 
             document.getElementById('examUnitSelectionView').style.display = 'none';
+            document.getElementById('examSelectionView').style.display = 'none';
             document.getElementById('examActiveView').style.display = 'flex';
             document.getElementById('examBookBadge').innerText = `ESSENTIAL ${bookNum} - UNIT ${unitNum}`;
             document.getElementById('taskInputGroup').style.display = 'flex';
@@ -1259,16 +1262,13 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // 50% ehtimollik bilan EN -> UZ yoki UZ -> EN chiqadi
                 currentQuestionType = (Math.random() < 0.5) ? 'en2uz' : 'uz2en';
                 let wordObj = currentActiveWords[currentIndex];
                 let promptText = "";
 
                 if (currentQuestionType === 'en2uz') {
-                    // Inglizcha so'z ko'rsatiladi -> o'zbekchasi so'raladi
                     promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
                 } else {
-                    // O'zbekcha tarjimasi ko'rsatiladi -> inglizchasi so'raladi
                     let uzDisplay = (wordObj.uz && wordObj.uz[0]) ? wordObj.uz[0] : wordObj.en;
                     promptText = "UZ: " + uzDisplay + " (Inglizchaga tarjima qiling)";
                 }
@@ -1299,10 +1299,8 @@
 
             let isCorrect = false;
             if (currentQuestionType === 'en2uz') {
-                // O'quvchi o'zbekcha yozishi kerak, so'z objectining 'uz' massividagilar bilan solishtiramiz
                 isCorrect = wordObj.uz.some(u => u.toLowerCase() === userVal);
             } else {
-                // O'quvchi inglizcha yozishi kerak, so'z objectining 'en' qiymati bilan solishtiramiz
                 isCorrect = (userVal === wordObj.en.toLowerCase());
             }
 
@@ -1324,7 +1322,6 @@
                 wrongAnswersCount++;
                 saveDB();
                 updateStudentUI();
-                // To'g'ri javobni chiqarish
                 let correctAnsText = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
                 msgEl.innerHTML = `❌ Xato! To'g'risi: <b style="color:#38bdf8;">${correctAnsText}</b>`;
                 msgEl.style.color = "#f87171";
@@ -1437,6 +1434,55 @@
             document.getElementById('reportWords').innerText = totalWords + " ta";
             document.getElementById('reportPercent').innerText = percent + "%";
             updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            let list = document.getElementById('leaderboardList');
+            if(!list) return;
+            list.innerHTML = '';
+            Object.values(studentsDB).sort((a, b) => b.xp - a.xp).forEach((st, index) => {
+                list.innerHTML += `<div class="leaderboard-item ${index === 0 ? 'top-1' : ''}"><div><b>${index + 1}-o'rin.</b> ${st.name}</div><div style="color: #fbbf24; font-weight: 700;">⚡ ${st.xp} XP</div></div>`;
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.getElementById(tabId).classList.add('active-tab');
+
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+                item.classList.remove('active');
+                let ic = item.querySelector('.nav-icon-container');
+                if(ic) ic.classList.remove('active-icon-wrapper');
+            });
+
+            let btnMap = {
+                'tabHome': ['navHome', 'iconHome'],
+                'tabLearn': ['navLearn', 'iconLearn'],
+                'tabTask': ['navTask', 'iconTask'],
+                'tabStudentAssignments': ['navStudentAssignmentsTab', 'iconStudentAssignments'],
+                'tabReport': ['navReport', 'iconReport'],
+                'tabRating': ['navRating', 'iconRating'],
+                'tabAddStudent': ['navAddStudentTab', 'iconAddStudentTab'],
+                'tabUploadAssignment': ['navUploadAssignmentTab', 'iconUploadAssignment'],
+                'tabResults': ['navResultsTab', 'iconResultsTab']
+            };
+
+            if(btnMap[tabId]) {
+                document.getElementById(btnMap[tabId][0]).classList.add('active');
+                document.getElementById(btnMap[tabId][1]).classList.add('active-icon-wrapper');
+            }
+
+            // Agar imtihon tabiga o'tsa, boshlang'ich kitoblar ro'yxatini ko'rsatish
+            if(tabId === 'tabTask') {
+                document.getElementById('examSelectionView').style.display = 'flex';
+                document.getElementById('examUnitSelectionView').style.display = 'none';
+                document.getElementById('examActiveView').style.display = 'none';
+            }
+
+            if(tabId === 'tabStudentAssignments') loadStudentAssignments();
+            if(tabId === 'tabUploadAssignment') renderAdminUnitList();
+            if(tabId === 'tabResults') loadAdminTable();
+            window.scrollTo(0, 0);
         }
 
         updateTaskBadge();
