@@ -311,7 +311,7 @@
             font-weight: 600;
         }
 
-        /* Imtihon kartochkalari (Essential 1 va 2) */
+        /* Imtihon kartochkalari */
         .exam-selection-view, .exam-active-view {
             display: flex;
             flex-direction: column;
@@ -606,7 +606,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: IMTIHON / TOPSHIRIQ (Essential 1 va Essential 2 Yozma Test Moduli) -->
+            <!-- TAB 3: IMTIHON / TOPSHIRIQ (Essential 1 va Essential 2) -->
             <div class="tab-content" id="tabTask">
                 
                 <!-- 1-Qism: Kitoblar ro'yxati -->
@@ -679,7 +679,7 @@
                         <div class="stat-sub">Bu hafta</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">TO'G'RI JAVOBLAR</div>
+                        <div class="stat-title">TO'g'ri JAVOBLAR</div>
                         <div class="stat-value">95%</div>
                         <div class="stat-sub-blue">Barqaror</div>
                     </div>
@@ -738,7 +738,6 @@
     </div>
 
     <script>
-        // Essential kitoblari bo'yicha lug'atlar bazasi
         const book1Words = [
             { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
             { en: "Knowledge", uz: ["bilim"] },
@@ -754,7 +753,7 @@
         let currentActiveWords = [];
         let currentIndex = 0;
         let learnedCount = 184;
-        let currentQuestionType = 'en2uz'; // 'en2uz' yoki 'uz2en'
+        let currentQuestionType = 'en2uz';
         let activeBookTitle = "";
 
         function executeLogin() {
@@ -838,7 +837,6 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // Inglizcha va o'zbekcha savollarni navbatma-navbat yoki tasodifiy almashtirish
                 currentQuestionType = (currentIndex % 2 === 0) ? 'en2uz' : 'uz2en';
                 
                 let wordObj = currentActiveWords[currentIndex];
@@ -892,8 +890,13 @@
                 currentIndex++;
                 setTimeout(loadWord, 1500);
             } else {
-                msgEl.innerText = "❌ Xato! Qaytadan urinib ko'ring.";
+                // Xato yozilganda to'g'ri javobni ko'rsatib, keyingi savolga o'tish
+                let correctDisplay = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
+                msgEl.innerHTML = `❌ Xato! To'g'ri javob: <b style="color:#38bdf8;">${correctDisplay}</b>`;
                 msgEl.style.color = "#f87171";
+                
+                currentIndex++;
+                setTimeout(loadWord, 2500); // 2.5 sekunddan keyin o'quvchi ko'rib ulgurishi uchun keyingi savolga o'tadi
             }
         }
     </script>
