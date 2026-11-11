@@ -986,7 +986,7 @@
     </div>
 
     <script>
-        // Kengaytirilgan lug'at bazasi (Inglizcha <-> O'zbekcha)
+        // Avtomatik standart o'zbekcha tarjimalar ro'yxati
         const autoDictionary = {
             "word": ["so'z", "soz"],
             "education": ["ta'lim", "talim", "o'qitish"],
@@ -1042,7 +1042,7 @@
 
         let currentActiveWords = [];
         let currentIndex = 0;
-        let currentQuestionType = 'en2uz'; // 'en2uz' yoki 'uz2en'
+        let currentQuestionType = 'en2uz'; 
         let correctAnswersCount = 0;
         let wrongAnswersCount = 0;
 
@@ -1143,7 +1143,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Masalan:&#10;Word - So'z&#10;Book - Kitob&#10;(yoki faqat inglizcha so'z yozing)">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Masalan:&#10;Word - So'z&#10;Book - Kitob&#10;(yoki faqat Word deb yozsangiz ham tizim avto tarjima qiladi)">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1169,7 +1169,7 @@
                 let eng = parts[0].trim();
                 let uzTr = parts.length > 1 ? [parts[1].trim().toLowerCase()] : null;
 
-                if (!uzTr) {
+                if (!uzTr || uzTr[0] === eng.toLowerCase()) {
                     let lowerEng = eng.toLowerCase();
                     uzTr = autoDictionary[lowerEng] || [eng.toLowerCase()];
                 }
@@ -1252,15 +1252,18 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // Tasodifiy ravishda en2uz yoki uz2en tanlanadi
+                // Perfect 50/50 Random generator for EN <-> UZ
                 currentQuestionType = (Math.random() < 0.5) ? 'en2uz' : 'uz2en';
                 let wordObj = currentActiveWords[currentIndex];
                 let promptText = "";
 
                 if (currentQuestionType === 'en2uz') {
+                    // Ekranda inglizcha so'z chiqadi, o'quvchi o'zbekchasini yozadi
                     promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
                 } else {
-                    promptText = "UZ: " + wordObj.uz[0] + " (Inglizchaga tarjima qiling)";
+                    // Ekranda o'zbekcha so'z chiqadi, o'quvchi inglizchasini yozadi
+                    let uzWordDisplay = (wordObj.uz && wordObj.uz[0]) ? wordObj.uz[0] : wordObj.en;
+                    promptText = "UZ: " + uzWordDisplay + " (Inglizchaga tarjima qiling)";
                 }
 
                 document.getElementById('currentPromptWord').innerText = promptText;
@@ -1289,10 +1292,10 @@
 
             let isCorrect = false;
             if (currentQuestionType === 'en2uz') {
-                // Inglizchadan o'zbekchaga so'ralganda o'quvchi kiritgan qiymat uz massividagilardan biriga teng bo'lishi kerak
+                // O'quvchi kiritgan matn uz tarjimalar ro'yxatida bormi?
                 isCorrect = wordObj.uz.some(u => u.toLowerCase() === userVal);
             } else {
-                // O'zbekchadan inglizchaga so'ralganda o'quvchi kiritgan qiymat en ga teng bo'lishi kerak
+                // O'quvchi kiritgan matn en so'ziga tengmi?
                 isCorrect = (userVal === wordObj.en.toLowerCase());
             }
 
@@ -1314,7 +1317,6 @@
                 wrongAnswersCount++;
                 saveDB();
                 updateStudentUI();
-                // To'g'ri javobni ko'rsatishda yo'nalishga qarab to'g'ri qiymat chiqariladi
                 let correctAnsText = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
                 msgEl.innerHTML = `❌ Xato! To'g'risi: <b style="color:#38bdf8;">${correctAnsText}</b>`;
                 msgEl.style.color = "#f87171";
