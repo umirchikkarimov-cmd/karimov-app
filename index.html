@@ -536,7 +536,7 @@
 
         .leaderboard-item.top-1 { border-color: #fbbf24; background: #1a1a2e; }
 
-        /* Bottom Nav */
+        /* Bottom Nav & Badge counter */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -565,6 +565,7 @@
             cursor: pointer;
             background: none;
             border: none;
+            position: relative;
         }
 
         .nav-item.active {
@@ -587,6 +588,19 @@
             margin-top: -10px;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
             font-size: 14px;
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -2px;
+            right: 4px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 10px;
+            border: 1px solid #0d0f1c;
         }
     </style>
 </head>
@@ -874,6 +888,7 @@
                     <span class="nav-icon">📋</span>
                 </div>
                 <span>Topshiriq</span>
+                <span class="nav-badge" id="studentTaskBadge" style="display:none;">0</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabReport')" id="navReport">
                 <div class="nav-icon-container" id="iconReport">
@@ -898,7 +913,7 @@
                 <div class="nav-icon-container" id="iconUploadAssignment">
                     <span class="nav-icon">📤</span>
                 </div>
-                <span>Topshiriq yuklash</span>
+                <span>Yuklash</span>
             </button>
             <button class="nav-item" onclick="switchTab('tabResults')" id="navResultsTab" style="display: none;">
                 <div class="nav-icon-container" id="iconResultsTab">
@@ -954,6 +969,18 @@
 
         function saveAssignments() {
             localStorage.setItem('karimov_assignments_db', JSON.stringify(assignmentsDB));
+            updateTaskBadge();
+        }
+
+        function updateTaskBadge() {
+            let badge = document.getElementById('studentTaskBadge');
+            if (!badge) return;
+            if (assignmentsDB.length > 0) {
+                badge.style.display = 'block';
+                badge.innerText = assignmentsDB.length;
+            } else {
+                badge.style.display = 'none';
+            }
         }
 
         function togglePasswordVisibility() {
@@ -1041,24 +1068,37 @@
             let sentences = textInput.split(/[.!?]+/).filter(Boolean);
             let sentenceCount = sentences.length;
 
-            // Avtomatik grammatik tahlil va xatolarni aniqlash simulyatsiyasi
             let errors = [];
             
-            // Katta harf bilan boshlanishini tekshirish
+            // Katta harf tekshiruvi
             if (textInput.length > 0 && textInput[0] !== textInput[0].toUpperCase()) {
                 errors.push("Jumlaning bosh harfi kichik yozilgan.");
             }
 
-            // Tinish belgisi bilan tugashini tekshirish
+            // Tinish belgisi tekshiruvi
             let lastChar = textInput[textInput.length - 1];
             if (lastChar !== '.' && lastChar !== '!' && lastChar !== '?') {
                 errors.push("Matn oxiriga nuqta yoki tinish belgisi qo'yilmagan.");
             }
 
-            // Qisqa so'zlarni yoki oddiy imlo xatolarini skanerlash
+            // Mashhur imlo xatolarini tekshirish lug'ati (Dictionary checker)
+            const commonTypos = {
+                "studeant": "student",
+                "tweny": "twenty",
+                "techer": "teacher",
+                "scholl": "school",
+                "friand": "friend",
+                "becuse": "because",
+                "lunar": "learn"
+            };
+
             words.forEach(w => {
-                if (w.toLowerCase() === "i") {
+                let cleanW = w.toLowerCase().replace(/[^a-z]/g, '');
+                if (cleanW === "i") {
                     errors.push("'i' olmoshini doim bosh harf bilan ('I') yozish kerak.");
+                }
+                if (commonTypos[cleanW]) {
+                    errors.push(`Imlo xatosi: '<b style="color:#f87171;">${w}</b>' so'zi noto'g'ri yozilgan. To'g'risi: '<b style="color:#34d399;">${commonTypos[cleanW]}</b>' bo'lishi kerak.`);
                 }
             });
 
@@ -1067,13 +1107,13 @@
 
             let feedbackHtml = `
                 <div style="background: #090b16; border: 1px solid #232943; border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 12px;">
-                    <b style="color: #38bdf8;">📝 Avtomatik Grammatika Tekshiruvi Natijasi:</b><br>
+                    <b style="color: #38bdf8;">📝 Avtomatik Imlo va Grammatika Tekshiruvi Natijasi:</b><br>
                     • So'zlar soni: <b>${wordCount} ta</b><br>
                     • Jumlalar soni: <b>${sentenceCount} ta</b><br>
                     • Baho: <b style="color: #34d399;">${score}%</b><br>
                     <div style="margin-top: 6px;">
-                        <b style="color: #f472b6;">Anqlangan xatolar / Tavsiyalar:</b>
-                        ${errors.length === 0 ? '<br><span style="color: #34d399;">✅ Ajoyib! Grammatik xatolar topilmadi.</span>' : '<ul style="margin-left: 15px; margin-top: 4px;">' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>'}
+                        <b style="color: #f472b6;">Aniq langan xatolar / Tavsiyalar:</b>
+                        ${errors.length === 0 ? '<br><span style="color: #34d399;">✅ Ajoyib! Imlo va grammatik xatolar topilmadi.</span>' : '<ul style="margin-left: 15px; margin-top: 4px;">' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>'}
                     </div>
                 </div>
             `;
@@ -1173,6 +1213,7 @@
             document.getElementById('navUploadAssignmentTab').style.display = 'none';
             document.getElementById('navResultsTab').style.display = 'none';
             document.getElementById('navStudentAssignmentsTab').style.display = 'flex';
+            updateTaskBadge();
             updateStudentUI();
             switchTab('tabHome');
             window.scrollTo(0, 0);
@@ -1450,6 +1491,9 @@
                 setTimeout(loadWord, 2500);
             }
         }
+
+        // Sahifa yuklanganda badge sonini tekshirish
+        updateTaskBadge();
     </script>
 
 </body>
