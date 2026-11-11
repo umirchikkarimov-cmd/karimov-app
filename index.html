@@ -1030,11 +1030,11 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v24'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v25'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v24')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v25')) || {
             1: { 
                 1: [
                     { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
@@ -1050,7 +1050,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v24')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v25')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1066,15 +1066,15 @@
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v24', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v25', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v24', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v25', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v24', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v25', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1105,7 +1105,7 @@
                 return;
             }
 
-            let currentStored = JSON.parse(localStorage.getItem('karimov_students_db_v24')) || {};
+            let currentStored = JSON.parse(localStorage.getItem('karimov_students_db_v25')) || {};
             studentsDB = { ...defaultDB, ...currentStored };
 
             studentsDB[login] = {
@@ -1254,7 +1254,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v24')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v25')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }];
@@ -1491,7 +1491,6 @@
                 currentStudentId = "ukarimov_admin";
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('dashboardScreen').style.display = 'flex';
-                document.getElementById('currentStudentName').innerText = "U.Karimov (O'qituvchi)";
                 document.getElementById('userRolePill').innerText = "O'qituvchi";
                 document.getElementById('headerXp').style.display = 'none';
                 document.getElementById('navAddStudentTab').style.display = 'flex';
@@ -1503,7 +1502,7 @@
                 return;
             }
 
-            let latestStored = JSON.parse(localStorage.getItem('karimov_students_db_v24'));
+            let latestStored = JSON.parse(localStorage.getItem('karimov_students_db_v25'));
             if (latestStored) studentsDB = { ...defaultDB, ...latestStored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1514,8 +1513,6 @@
             currentStudentId = loginInput;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboardScreen').style.display = 'flex';
-            // O'quvchi kirganda ham tepada doimiy "U.Karimov" chiqishi ta'minlandi
-            document.getElementById('currentStudentName').innerText = "U.Karimov";
             document.getElementById('userRolePill').innerText = "O'quvchi";
             document.getElementById('headerXp').style.display = 'block';
             document.getElementById('navAddStudentTab').style.display = 'none';
@@ -1534,7 +1531,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v24'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v25'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
