@@ -105,7 +105,7 @@
             padding-bottom: 90px;
         }
 
-        /* 3. O'QITUVCHI BOSHQARUV PANELİ */
+        /* 3. O'QITUVCHI BOSHQARUV PANELI */
         .admin-screen {
             display: none;
             width: 100%;
@@ -130,6 +130,7 @@
             border-radius: 16px;
             border-collapse: collapse;
             overflow: hidden;
+            margin-bottom: 10px;
         }
 
         .admin-table th, .admin-table td {
@@ -592,34 +593,47 @@
             <p>Shaxsiy kabinetga kirish</p>
             
             <div class="form-group">
-                <input type="text" id="phone" placeholder="Telefon raqam yoki ID (masalan: o'quvchi1)">
+                <input type="text" id="phone" placeholder="Login yoki telefon raqam">
             </div>
             <div class="form-group">
                 <input type="password" id="password" placeholder="Parol">
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">O'qituvchi uchun login: <b>admin</b>, parol: <b>admin123</b></p>
+            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">O'qituvchi logini: <b>admin</b> | Parol: <b>admin123</b></p>
         </div>
     </div>
 
-    <!-- O'QITUVCHI BOSHQARUV PANELI -->
+    <!-- O'QITUVCHI BOSHQARUV PANELI (Faqat O'qituvchiga ko'rinadi) -->
     <div class="admin-screen" id="adminScreen">
         <div class="admin-container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 18px; color: #c084fc;">👨‍🏫 O'qituvchi Boshqaruv Paneli</h2>
                 <button class="btn-back" onclick="logoutAdmin()">Chiqish</button>
             </div>
+
+            <!-- O'quvchi qo'shish bloki -->
             <div class="general-card">
-                <h3>O'quvchilar Statistikasi</h3>
-                <p>Har bir talabaning Essential kitoblari bo'yicha ishlagan natijalari va o'rgangan so'zlari:</p>
+                <h3>➕ Yangi O'quvchi Qo'shish</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                    <input type="text" id="newStudentName" placeholder="O'quvchining F.I.O" class="task-input">
+                    <input type="text" id="newStudentLogin" placeholder="Login (masalan: ali19)" class="task-input">
+                    <input type="text" id="newStudentPass" placeholder="Parol (masalan: 1234)" class="task-input">
+                    <button class="btn-purple" onclick="addNewStudent()">O'quvchi yaratish</button>
+                </div>
             </div>
+
+            <div class="general-card">
+                <h3>📊 O'quvchilar Statistikasi</h3>
+                <p>Barcha talabalarning kitoblar bo'yicha ko'rsatkichlari:</p>
+            </div>
+
             <table class="admin-table">
                 <thead>
                     <tr>
                         <th>O'quvchi</th>
                         <th>Essential 1</th>
                         <th>Essential 2</th>
-                        <th>Jami So'z</th>
+                        <th>Jami</th>
                         <th>XP</th>
                     </tr>
                 </thead>
@@ -829,10 +843,9 @@
     </div>
 
     <script>
-        // O'quvchilar bazasi va ma'lumotlari (LocalStorage orqali saqlanadi)
+        // O'quvchilar bazasi (LocalStorage orqali saqlanadi)
         let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {
-            "o'quvchi1": { name: "O'quvchi 1", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 },
-            "o'quvchi2": { name: "O'quvchi 2", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
+            "o'quvchi1": { name: "Azizbek", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
         };
 
         let currentStudentId = null;
@@ -861,6 +874,41 @@
             localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
         }
 
+        // Yangi o'quvchi qo'shish funksiyasi (Faqat admin paneldan ishlaydi)
+        function addNewStudent() {
+            let name = document.getElementById('newStudentName').value.trim();
+            let login = document.getElementById('newStudentLogin').value.trim().toLowerCase();
+            let pass = document.getElementById('newStudentPass').value.trim();
+
+            if (!name || !login || !pass) {
+                alert("Barcha maydonlarni to'ldiring!");
+                return;
+            }
+
+            if (studentsDB[login]) {
+                alert("Bu login band! Boshqa login kiriting.");
+                return;
+            }
+
+            studentsDB[login] = {
+                name: name,
+                pass: pass,
+                book1: 0,
+                book2: 0,
+                xp: 0,
+                totalCorrect: 0,
+                totalAttempts: 0
+            };
+
+            saveDB();
+            loadAdminTable();
+
+            document.getElementById('newStudentName').value = '';
+            document.getElementById('newStudentLogin').value = '';
+            document.getElementById('newStudentPass').value = '';
+            alert("O'quvchi muvaffaqiyatli qo'shildi!");
+        }
+
         function executeLogin() {
             let loginInput = document.getElementById('phone').value.trim().toLowerCase();
             let passInput = document.getElementById('password').value.trim();
@@ -870,7 +918,7 @@
                 return;
             }
 
-            // O'qituvchi tekshiruvi
+            // O'qituvchi admin tekshiruvi
             if (loginInput === "admin" && passInput === "admin123") {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminScreen').style.display = 'flex';
@@ -878,22 +926,9 @@
                 return;
             }
 
-            // O'quvchi tekshiruvi (agar mavjud bo'lmasa, avtomatik yangi o'quvchi sifatida ochib beradi)
-            if (!studentsDB[loginInput]) {
-                studentsDB[loginInput] = {
-                    name: loginInput,
-                    pass: passInput,
-                    book1: 0,
-                    book2: 0,
-                    xp: 0,
-                    totalCorrect: 0,
-                    totalAttempts: 0
-                };
-                saveDB();
-            }
-
-            if (studentsDB[loginInput].pass !== passInput) {
-                alert("Parol noto'g'ri!");
+            // O'quvchi tekshiruvi
+            if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
+                alert("Login yoki parol xato!");
                 return;
             }
 
@@ -928,7 +963,7 @@
                 let totalWords = st.book1 + st.book2;
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${st.name}</b></td>
+                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id}</span></td>
                         <td>${st.book1} ta so'z</td>
                         <td>${st.book2} ta so'z</td>
                         <td>${totalWords} ta</td>
@@ -952,186 +987,3 @@
             document.getElementById('knowledgePercentTask').innerText = percent + "%";
             document.getElementById('reportWords').innerText = totalWords + " ta";
             document.getElementById('reportPercent').innerText = percent + "%";
-
-            updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            let list = document.getElementById('leaderboardList');
-            list.innerHTML = '';
-
-            // O'quvchilarni XP bo'yicha saralash
-            let sortedStudents = Object.values(studentsDB).sort((a, b) => b.xp - a.xp);
-
-            sortedStudents.forEach((st, index) => {
-                let topClass = index === 0 ? 'top-1' : '';
-                list.innerHTML += `
-                    <div class="leaderboard-item ${topClass}">
-                        <div><b>${index + 1}-o'rin.</b> ${st.name}</div>
-                        <div style="color: #fbbf24; font-weight: 700;">⚡ ${st.xp} XP</div>
-                    </div>
-                `;
-            });
-        }
-
-        function switchTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active-tab'));
-
-            const targetTab = document.getElementById(tabId);
-            if (targetTab) {
-                targetTab.classList.add('active-tab');
-            }
-
-            const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                const iconContainer = item.querySelector('.nav-icon-container');
-                if (iconContainer) {
-                    iconContainer.classList.remove('active-icon-wrapper');
-                }
-            });
-
-            let activeNavBtn = document.getElementById('navHome');
-            let activeIconContainer = document.getElementById('iconHome');
-
-            if (tabId === 'tabHome') {
-                activeNavBtn = document.getElementById('navHome');
-                activeIconContainer = document.getElementById('iconHome');
-            } else if (tabId === 'tabLearn') {
-                activeNavBtn = document.getElementById('navLearn');
-                activeIconContainer = document.getElementById('iconLearn');
-            } else if (tabId === 'tabTask') {
-                activeNavBtn = document.getElementById('navTask');
-                activeIconContainer = document.getElementById('iconTask');
-            } else if (tabId === 'tabReport') {
-                activeNavBtn = document.getElementById('navReport');
-                activeIconContainer = document.getElementById('iconReport');
-            } else if (tabId === 'tabRating') {
-                activeNavBtn = document.getElementById('navRating');
-                activeIconContainer = document.getElementById('iconRating');
-                updateLeaderboard();
-            }
-
-            if (activeNavBtn) activeNavBtn.classList.add('active');
-            if (activeIconContainer) activeIconContainer.classList.add('active-icon-wrapper');
-
-            window.scrollTo(0, 0);
-        }
-
-        function startExam(bookNumber) {
-            activeBookNumber = bookNumber;
-            if (bookNumber === 1) {
-                currentActiveWords = book1Words;
-                activeBookTitle = "ESSENTIAL 1";
-            } else {
-                currentActiveWords = book2Words;
-                activeBookTitle = "ESSENTIAL 2";
-            }
-
-            currentIndex = 0;
-            correctAnswersCount = 0;
-            wrongAnswersCount = 0;
-
-            document.getElementById('examSelectionView').style.display = 'none';
-            document.getElementById('examActiveView').style.display = 'flex';
-            document.getElementById('examBookBadge').innerText = activeBookTitle;
-            document.getElementById('taskInputGroup').style.display = 'flex';
-            loadWord();
-        }
-
-        function backToExamSelection() {
-            document.getElementById('examActiveView').style.display = 'none';
-            document.getElementById('examSelectionView').style.display = 'flex';
-        }
-
-        function loadWord() {
-            if (currentIndex < currentActiveWords.length) {
-                currentQuestionType = (currentIndex % 2 === 0) ? 'en2uz' : 'uz2en';
-                
-                let wordObj = currentActiveWords[currentIndex];
-                let promptText = "";
-
-                if (currentQuestionType === 'en2uz') {
-                    promptText = "EN: " + wordObj.en + " (O'zbekchaga tarjima qiling)";
-                } else {
-                    promptText = "UZ: " + wordObj.uz[0] + " (Inglizchaga tarjima qiling)";
-                }
-
-                document.getElementById('currentPromptWord').innerText = promptText;
-                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + currentActiveWords.length + " so'z";
-                document.getElementById('userTranslation').value = "";
-                document.getElementById('taskResultMsg').innerText = "";
-                document.getElementById('taskInputGroup').style.display = 'flex';
-            } else {
-                document.getElementById('currentPromptWord').innerText = "🎉 Imtihon Yakunlandi!";
-                document.getElementById('taskInputGroup').style.display = 'none';
-                
-                let resultHTML = `
-                    <div style="font-size: 14px; line-height: 1.6; color: #cbd5e1; margin-top: 5px;">
-                        To'g'ri javoblar: <b style="color: #34d399;">${correctAnswersCount} ta</b><br>
-                        Xato javoblar: <b style="color: #f87171;">${wrongAnswersCount} ta</b><br>
-                        Umumiy natija: <b>${Math.round((correctAnswersCount / currentActiveWords.length) * 100)}%</b>
-                    </div>
-                `;
-                document.getElementById('taskResultMsg').innerHTML = resultHTML;
-            }
-        }
-
-        function checkTranslation() {
-            if (currentIndex >= currentActiveWords.length) return;
-
-            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
-            let wordObj = currentActiveWords[currentIndex];
-            let msgEl = document.getElementById('taskResultMsg');
-
-            if (userVal === "") {
-                alert("Iltimos, tarjimani yozing!");
-                return;
-            }
-
-            let isCorrect = false;
-            if (currentQuestionType === 'en2uz') {
-                isCorrect = wordObj.uz.includes(userVal);
-            } else {
-                isCorrect = (userVal === wordObj.en.toLowerCase());
-            }
-
-            let st = studentsDB[currentStudentId];
-            st.totalAttempts++;
-
-            if (isCorrect) {
-                correctAnswersCount++;
-                st.totalCorrect++;
-                st.xp += 15; // Har bir to'g'ri javob uchun XP
-
-                if (activeBookNumber === 1) {
-                    st.book1++;
-                } else {
-                    st.book2++;
-                }
-                saveDB();
-                updateStudentUI();
-
-                msgEl.innerText = "✅ To'g'ri! Barakalla.";
-                msgEl.style.color = "#34d399";
-                
-                currentIndex++;
-                setTimeout(loadWord, 1500);
-            } else {
-                wrongAnswersCount++;
-                saveDB();
-                updateStudentUI();
-
-                let correctDisplay = (currentQuestionType === 'en2uz') ? wordObj.uz[0] : wordObj.en;
-                msgEl.innerHTML = `❌ Xato! To'g'ri javob: <b style="color:#38bdf8;">${correctDisplay}</b>`;
-                msgEl.style.color = "#f87171";
-                
-                currentIndex++;
-                setTimeout(loadWord, 2500);
-            }
-        }
-    </script>
-
-</body>
-</html>
