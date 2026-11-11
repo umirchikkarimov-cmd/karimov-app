@@ -61,11 +61,12 @@
         .form-group {
             margin-bottom: 18px;
             text-align: left;
+            position: relative;
         }
 
         .form-group input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 14px 45px 14px 18px; /* Ko'zcha uchun o'ng tomondan joy tashlandi */
             background: #090b16;
             border: 1px solid #232943;
             color: #fff;
@@ -78,6 +79,19 @@
         .form-group input:focus {
             border-color: #8b5cf6;
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Parolni ko'rsatish/yashirish ko'zchasi */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #8b9bb4;
         }
 
         .btn-submit {
@@ -597,13 +611,14 @@
             </div>
             <div class="form-group">
                 <input type="password" id="password" placeholder="Parol">
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">👁️</button>
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">O'qituvchi logini: <b>ukarimov</b> | Parol: <b>admin2026</b></p>
+            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">Admin: <b>ukarimov</b> / <b>admin2026</b><br>O'quvchi testi: <b>ali</b> / <b>1234</b></p>
         </div>
     </div>
 
-    <!-- O'QITUVCHI BOSHQARUV PANELI (Faqat O'qituvchiga ko'rinadi) -->
+    <!-- O'QITUVCHI BOSHQARUV PANELI -->
     <div class="admin-screen" id="adminScreen">
         <div class="admin-container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -843,8 +858,9 @@
     </div>
 
     <script>
-        // O'quvchilar bazasi (LocalStorage)
-        let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {};
+        let studentsDB = JSON.parse(localStorage.getItem('karimov_students_db')) || {
+            "ali": { name: "Ali", pass: "1234", book1: 0, book2: 0, xp: 0, totalCorrect: 0, totalAttempts: 0 }
+        };
 
         let currentStudentId = null;
 
@@ -872,7 +888,16 @@
             localStorage.setItem('karimov_students_db', JSON.stringify(studentsDB));
         }
 
-        // 1. O'qituvchi o'z panelidan o'quvchi qo'shishi
+        // Parolni ko'rsatish / yashirish funksiyasi
+        function togglePasswordVisibility() {
+            let passInput = document.getElementById('password');
+            if (passInput.type === "password") {
+                passInput.type = "text";
+            } else {
+                passInput.type = "password";
+            }
+        }
+
         function addNewStudent() {
             let name = document.getElementById('newStudentName').value.trim();
             let login = document.getElementById('newStudentLogin').value.trim().toLowerCase();
@@ -907,7 +932,6 @@
             alert("O'quvchi muvaffaqiyatli qo'shildi!");
         }
 
-        // 2. Kirish jarayoni (O'qituvchi va faqat ro'yxatdagi o'quvchilar uchun)
         function executeLogin() {
             let loginInput = document.getElementById('phone').value.trim().toLowerCase();
             let passInput = document.getElementById('password').value.trim();
@@ -917,7 +941,6 @@
                 return;
             }
 
-            // O'qituvchi (Admin) maxsus paroli
             if (loginInput === "ukarimov" && passInput === "admin2026") {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminScreen').style.display = 'flex';
@@ -925,13 +948,11 @@
                 return;
             }
 
-            // O'quvchi bazada bormi tekshirish
             if (!studentsDB[loginInput]) {
                 alert("Bunday o'quvchi topilmadi! Iltimos, o'qituvchingizdan login oling.");
                 return;
             }
 
-            // O'quvchi parolini tekshirish
             if (studentsDB[loginInput].pass !== passInput) {
                 alert("Parol noto'g'ri! Iltimos, to'g'ri parolni kiriting.");
                 return;
