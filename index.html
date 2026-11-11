@@ -1030,11 +1030,11 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v19'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v20'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v19')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v20')) || {
             1: { 
                 1: [
                     { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
@@ -1050,7 +1050,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v19')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v20')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1066,15 +1066,15 @@
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v19', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v20', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v19', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v20', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v19', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v20', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1251,7 +1251,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v19')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v20')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }];
@@ -1343,7 +1343,7 @@
             }
 
             let st = studentsDB[currentStudentId];
-            if (!st.learnedWords) st.learnedWords = {};
+            if (!st.learnedWords) st.learnedWords. {};
 
             if (isCorrect) {
                 correctInThisSession++;
@@ -1389,7 +1389,7 @@
                 let feedbackHtml = submittedData ? `
                     <div style="margin-top:10px; padding:12px; background:#090b16; border:1px solid #232943; border-radius:10px;">
                         <b style="color:#34d399;">🤖 AI Tahlil Natijasi:</b>
-                        <div style="font-size:11px; color:#cbd5e1; mt-6px; line-height:1.5;">${submittedData.feedback}</div>
+                        <div style="font-size:11px; color:#cbd5e1; margin-top:6px; line-height:1.5;">${submittedData.feedback}</div>
                     </div>
                 ` : '';
 
@@ -1423,58 +1423,34 @@
             let errorsFound = [];
             let warningsFound = [];
 
-            // 1. Har bir so'zni va imloni chuqur tekshirish
-            wordList.forEach(rawWord => {
-                let cleanWord = rawWord.toLowerCase().replace(/[^a-z']/g, '');
+            // 1. Katta harf va asosiy imlo qoidalarini tekshirish
+            let lowerText = textVal.toLowerCase();
 
-                if (cleanWord === 'i') {
-                    errorsFound.push(`❌ Grammatik xato: "${rawWord}" olmoshi har doim **katta harf** (I) bilan yozilishi shart.`);
-                }
-
-                if (cleanWord === 'studen' || cleanWord === 'stuent' || cleanWord === 'studint') {
-                    errorsFound.push(`❌ Imlo xatosi: "${rawWord}" so'zida harf tushib qolgan. To'g'ri yozilishi: **'student'**.`);
-                }
-                if (cleanWord === 'yiir' || cleanWord === 'yaar' || cleanWord === 'yeer' || cleanWord === 'yers') {
-                    errorsFound.push(`❌ Imlo xatosi: "${rawWord}" so'zida imlo xatosi bor. To'g'ri yozilishi: **'year'** (yoki **'years'**).`);
-                }
-                if (cleanWord === 'favourite' || cleanWord === 'favorite' || cleanWord === 'colir' || cleanWord === 'colour' || cleanWord === 'color' || cleanWord === 'pen') {
-                    // To'g'ri so'zlar, xato emas
-                } else {
-                    // Noma'lum yoki shubhali so'zlarni tekshirish
-                    if (cleanWord.length > 4 && !['is', 'am', 'are', 'my', 'the', 'and', 'book', 'movie'].includes(cleanWord)) {
-                        // Maxsus xato so'zlar bazasi
-                        if (cleanWord === 'studen') {
-                            errorsFound.push(`❌ Imlo xatosi: "${rawWord}" so'zi xato yozilgan. To'g'risi: **'student'**.`);
-                        }
-                    }
+            // "I" olmoshi kichik yozilgan bo'lsa
+            let wordsArr = textVal.split(/\s+/);
+            wordsArr.forEach(w => {
+                let cleanW = w.replace(/[^a-zA-Z]/g, '');
+                if (cleanW === 'i') {
+                    errorsFound.push(`❌ Grammatik xato: "${w}" olmoshi har doim **katta harf** (I) bilan yozilishi shart.`);
                 }
             });
 
-            let lowerText = textVal.toLowerCase();
-
-            // Qat'iy imlo tekshiruvi (studen, yiir kabi xatolar uchun to'g'ridan-to'g'ri tekshiruv)
-            if (lowerText.includes("studen")) {
-                if (!errorsFound.some(e => e.includes('student'))) {
-                    errorsFound.push("❌ Imlo xatosi: 'studen' so'zi noto'g'ri yozilgan. To'g'ri yozilishi: **'student'**.");
-                }
-            }
-            if (lowerText.includes("yiir")) {
-                if (!errorsFound.some(e => e.includes('year'))) {
-                    errorsFound.push("❌ Imlo xatosi: 'yiir' so'zi noto'g'ri yozilgan. To'g'ri yozilishi: **'year'** (yoki **'years'**).");
-                }
+            // 2. "I am student" kabi artikl tushib qolgan holatlar
+            if (lowerText.includes("i am student") || lowerText.includes("i'm student")) {
+                errorsFound.push("❌ Grammatik xato: Sanaladigan otlar oldidan noaniqlik artikli ishlatilishi shart (masalan: **'I am a student'**).");
             }
 
-            // 2. Ega-kesim va yosh qoidalari
+            // 3. Ega-kesim xatolari
             if (lowerText.includes("i are") || lowerText.includes("i is") || lowerText.includes("he am")) {
-                errorsFound.push("❌ Grammatik tuzilish xatosi: Ega va kesim moslashuvida xato bor (masalan: 'i is' o'rniga **'I am'** bo'lishi kerak).");
+                errorsFound.push("❌ Grammatik tuzilish xatosi: Ega va kesim moslashuvida xato bor (masalan: **'I am'** bo'lishi kerak).");
             }
 
-            // 3. Mavzuga moslik (Kitob yoki kino o'rniga boshqa narsa yozilganini tekshirish)
-            if (lowerText.includes("color is pen") || lowerText.includes("colour is pen") || lowerText.includes("is pen")) {
-                warningsFound.push("⚠️ Mavzu va ma'no xatosi: Sevimli kitob yoki kino mavzusida 'color is pen' iborasi mantiqan to'g'ri kelmaydi. Kitobni ta'riflash uchun **'interesting'** yoki **'exciting'** so'zlarini ishlating.");
+            // 4. Mavzuga moslik (Kitob yoki kino o'rniga rang yozilganini tekshirish)
+            if (lowerText.includes("colour is") || lowerText.includes("color is") || lowerText.includes("is red") || lowerText.includes("is black")) {
+                warningsFound.push("⚠️ Mavzu va ma'no xatosi: Sevimli kitob yoki kino mavzusida ranglar haqida yozish mos kelmaydi. Kitob yoki kino nomini va uning ta'rifini yozing.");
             }
 
-            // 4. Gaplar soni talabi
+            // 5. Gaplar soni talabi
             if (sentences.length < 3) {
                 warningsFound.push(`⚠️ Hajm bo'yicha ogohlantirish: Mavzuda kamida 3 ta to'liq gap yozish talab etilgan edi (Sizda ${sentences.length} ta gap mavjud).`);
             }
@@ -1531,7 +1507,7 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v19'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v20'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1561,7 +1537,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v19'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v20'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
