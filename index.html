@@ -1030,11 +1030,12 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v22'));
+        // Bazani to'g'ri yuklash va birlashtirish (v23)
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v23'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v22')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v23')) || {
             1: { 
                 1: [
                     { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
@@ -1050,7 +1051,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v22')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v23')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1066,15 +1067,15 @@
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v22', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v23', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v22', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v23', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v22', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v23', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1104,6 +1105,10 @@
                 alert("Barcha maydonlarni to'ldiring!");
                 return;
             }
+
+            // Har safar o'quvchi qo'shganda bazani yangilab, xotiraga saqlash
+            let currentStored = JSON.parse(localStorage.getItem('karimov_students_db_v23')) || {};
+            studentsDB = { ...defaultDB, ...currentStored };
 
             studentsDB[login] = {
                 name: name,
@@ -1251,7 +1256,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v22')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v23')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }];
@@ -1506,8 +1511,9 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v22'));
-            if (stored) studentsDB = { ...defaultDB, ...stored };
+            // O'quvchi kirishida bazani doimo to'liq tekshirish
+            let latestStored = JSON.parse(localStorage.getItem('karimov_students_db_v23'));
+            if (latestStored) studentsDB = { ...defaultDB, ...latestStored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
                 alert("Login yoki parol noto'g'ri!");
@@ -1536,7 +1542,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v22'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v23'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
@@ -1548,7 +1554,7 @@
                 let b2Count = st.unitScores ? Object.values(st.unitScores).filter(s => s.book == 2).length : 0;
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id}</span></td>
+                        <td><b>${st.name}</b><br><span style="color:#64748b; font-size:10px;">Login: ${id}</span><br><span style="color:#38bdf8; font-size:10px;">Parol: ${st.pass}</span></td>
                         <td>${b1Count} ta unit</td>
                         <td>${b2Count} ta unit</td>
                         <td>⚡ ${st.xp} XP</td>
