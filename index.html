@@ -453,14 +453,14 @@
                 <input type="text" id="phone" placeholder="Telefon raqam yoki ID">
             </div>
             <div class="form-group">
-                <input type="text" id="password" placeholder="Parol">
+                <input type="password" id="password" placeholder="Parol">
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
         </div>
     </div>
 
     <!-- 2-BOSQICH: DASHBOARD -->
-    <div class="dashboard-screen" id="dashboardScreen">
+    <div class="dashboard-screen" id="dashboardScreen" style="display: none;">
         
         <!-- Header -->
         <div class="top-navbar">
@@ -484,4 +484,229 @@
             <div class="tab-content active-tab" id="tabHome">
                 <div class="hero-card">
                     <div class="hero-header">
-                        <span class="badge-purple">Kunlik Vazifa
+                        <span class="badge-purple">Kunlik Vazifa</span>
+                        <span class="hero-date">10-Noyabr</span>
+                    </div>
+                    <h2 class="hero-title">Bilimingizni <span>topshiriqlar orqali rivojlantiring!</span></h2>
+                    <p class="hero-desc">Bugungi lug'at va topshiriqlarni bajarib, bilim darajangizni oshiring va reytingda yuqoriga ko'tariling!</p>
+                    <div class="hero-btns">
+                        <button class="btn-purple" onclick="switchTab('tabLearn')">📖 O'rganishni Boshlash</button>
+                        <button class="btn-outline" onclick="switchTab('tabTask')">📝 Imtihon Topshirish</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                        <div class="stat-value" id="learnedWordsCountHome">184 ta</div>
+                        <div class="stat-sub">↗ Lug'at topshiriqlari asosida</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
+                        <div class="stat-value">98%</div>
+                        <div class="stat-sub-blue">Faol o'quvchi</div>
+                    </div>
+                </div>
+
+                <div class="general-card">
+                    <h3>Xush kelibsiz!</h3>
+                    <p>Ushbu platforma orqali siz o'z bilimingizni mustahkamlab, yangi so'zlarni o'zlashtirib borishingiz mumkin. Pastdagi menyu orqali boshqa bo'limlarga o'ting.</p>
+                </div>
+            </div>
+
+            <!-- TAB 2: O'RGANISH -->
+            <div class="tab-content" id="tabLearn">
+                <div class="general-card">
+                    <h3>📖 Lug'atlar va Materiallar</h3>
+                    <p>Bu yerda siz o'rganishingiz kerak bo'lgan joriy mavzular va lug'at to'plamlarini topasiz. Kundalik vazifalarni bajarish orqali so'z boyligingizni kengaytiring.</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">JAMI O'ZLASHTIRILGAN</div>
+                    <div class="stat-value" id="learnedWordsCountLearn">184 ta</div>
+                    <div class="stat-sub">Yaxshi natija!</div>
+                </div>
+            </div>
+
+            <!-- TAB 3: IMTIHON / TOPSHIRIQ (Yozma Tarjima Moduli) -->
+            <div class="tab-content" id="tabTask">
+                <div class="task-card">
+                    <div class="task-header">
+                        <span class="word-badge">YOZMA TARJIMA IMTIHONI</span>
+                        <span class="word-counter" id="wordProgress">1 / 3 so'z</span>
+                    </div>
+                    <div class="target-word" id="currentEnglishWord">Education</div>
+                    <div class="task-input-group">
+                        <input type="text" class="task-input" id="userTranslation" placeholder="O'zbekcha tarjimasini yozing...">
+                        <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
+                    </div>
+                    <div class="task-result" id="taskResultMsg"></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
+                        <div class="stat-value" id="learnedWordsCountTask">184 ta</div>
+                        <div class="stat-sub">↗ Lug'at natijalari asosida</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
+                        <div class="stat-value">98%</div>
+                        <div class="stat-sub-blue">A'lo darajada</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: HISOBOT -->
+            <div class="tab-content" id="tabReport">
+                <div class="general-card">
+                    <h3>📊 O'quv Hisoboti</h3>
+                    <p>Oxirgi 7 kunlik faolligingiz juda yaxshi. Topshiriqlarni bajarishda xatoliklar kamayib, bilim ko'rsatkichi 98% ga yetdi.</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">BAJARILGAN TOPSHIRIQLAR</div>
+                        <div class="stat-value">24 ta</div>
+                        <div class="stat-sub">Bu hafta</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">TO'G'RI JAVOBLAR</div>
+                        <div class="stat-value">95%</div>
+                        <div class="stat-sub-blue">Barqaror</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: REYTING -->
+            <div class="tab-content" id="tabRating">
+                <div class="general-card">
+                    <h3>🏆 Reyting Jadvali</h3>
+                    <p>Siz faol ishtirokchilar orasida yuqori o'rinlarni egallab turibsiz. Reytingda 1-o'ringa chiqish uchun ko'proq topshiriq bajaring!</p>
+                </div>
+                <div class="stat-card" style="border-color: #8b5cf6;">
+                    <div class="stat-title">SIZNING O'RNINGIZ</div>
+                    <div class="stat-value" style="color: #c084fc;">3-o'rin</div>
+                    <div class="stat-sub">⚡ 1,240 XP</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="switchTab('tabHome')" id="navHome">
+                <span class="nav-icon">🏠</span>
+                <span>Bo'sh sahifa</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('tabLearn')" id="navLearn">
+                <span class="nav-icon">📖</span>
+                <span>O'rganish</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('tabTask')" id="navTask">
+                <span class="nav-icon">📝</span>
+                <span>Imtihon</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('tabReport')" id="navReport">
+                <span class="nav-icon">📊</span>
+                <span>Hisobot</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('tabRating')" id="navRating">
+                <span class="nav-icon">🏆</span>
+                <span>Reyting</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const vocabularyList = [
+            { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
+            { en: "Knowledge", uz: ["bilim"] },
+            { en: "Success", uz: ["muvaffaqiyat", "omad"] }
+        ];
+
+        let currentIndex = 0;
+        let learnedCount = 184;
+
+        function executeLogin() {
+            var phone = document.getElementById('phone').value.trim();
+            var password = document.getElementById('password').value.trim();
+
+            if (phone === "" || password === "") {
+                alert("Iltimos, ma'lumotlarni kiriting!");
+                return;
+            }
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'flex';
+            window.scrollTo(0, 0);
+            loadWord();
+        }
+
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active-tab'));
+
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active-tab');
+            }
+
+            const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            if (tabId === 'tabHome') document.getElementById('navHome').classList.add('active');
+            if (tabId === 'tabLearn') document.getElementById('navLearn').classList.add('active');
+            if (tabId === 'tabTask') document.getElementById('navTask').classList.add('active');
+            if (tabId === 'tabReport') document.getElementById('navReport').classList.add('active');
+            if (tabId === 'tabRating') document.getElementById('navRating').classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        function loadWord() {
+            if (currentIndex < vocabularyList.length) {
+                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
+                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
+                document.getElementById('userTranslation').value = "";
+                document.getElementById('taskResultMsg').innerText = "";
+            } else {
+                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
+                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
+                document.getElementById('taskResultMsg').style.color = "#34d399";
+            }
+        }
+
+        function checkTranslation() {
+            if (currentIndex >= vocabularyList.length) return;
+
+            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
+            let validAnswers = vocabularyList[currentIndex].uz;
+            let msgEl = document.getElementById('taskResultMsg');
+
+            if (userVal === "") {
+                alert("Iltimos, tarjimani yozing!");
+                return;
+            }
+
+            let isCorrect = validAnswers.includes(userVal);
+
+            if (isCorrect) {
+                msgEl.innerText = "✅ To'g'ri! Barakalla.";
+                msgEl.style.color = "#34d399";
+                learnedCount++;
+                
+                document.getElementById('learnedWordsCountHome').innerText = learnedCount + " ta";
+                document.getElementById('learnedWordsCountLearn').innerText = learnedCount + " ta";
+                document.getElementById('learnedWordsCountTask').innerText = learnedCount + " ta";
+                
+                currentIndex++;
+                setTimeout(loadWord, 1500);
+            } else {
+                msgEl.innerText = "❌ Xato! Qaytadan urinib ko'ring.";
+                msgEl.style.color = "#f87171";
+            }
+        }
+    </script>
+
+</body>
+</html>
