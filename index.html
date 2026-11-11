@@ -908,7 +908,7 @@
                 </div>
             </div>
 
-            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun + Chuqur ma'no va grammatika tahlili) -->
+            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun + Mukammal AI Writing Tahlili) -->
             <div class="tab-content" id="tabStudentAssignments">
                 <div class="general-card">
                     <h3>📋 O'qituvchi yuborgan topshiriqlar</h3>
@@ -985,33 +985,33 @@
     </div>
 
     <script>
-        const autoDictionary = {
-            "afraid": ["qo'rqqan", "qorqqan"],
-            "agree": ["rozi bo'lmoq", "rozi"],
-            "angry": ["jahli chiqqan", "g'azablangan"],
-            "approach": ["yondashuv", "yaqinlashmoq", "yondashmoq"],
-            "arrive": ["yetib kelmoq", "kelmoq"],
-            "attack": ["hujum qilmoq", "hujum"],
-            "bottom": ["tubi", "tagi", "osti"],
-            "clever": ["aqlli", "zukko"],
-            "cruel": ["shafqatsiz", "bag'ritosh"],
-            "finally": ["nihoyat", "oxir-oqibat"],
-            "hide": ["berkitmoq", "yashirmoq"],
-            "hunt": ["ov qilmoq", "ov"],
-            "laugh": ["kulmoq", "kulgi"],
-            "lot": ["ko'p", "ko'pgina"],
-            "middle": ["o'rta", "ortacha"],
-            "moment": ["lahza", "on", "payt"],
-            "pleased": ["xursand", "mamnun"],
-            "project": ["loyiha"],
-            "promise": ["va'da bermoq", "vada"],
-            "reply": ["javob bermoq", "javob"],
-            "safe": ["xavfsiz", "tinch"],
-            "trick": ["hiyla", "aldamoq"],
-            "well": ["yaxshi", "quduq"],
-            "word": ["so'z", "soz"],
-            "education": ["ta'lim", "talim"],
-            "knowledge": ["bilim"]
+        const uzTranslationsDB = {
+            "afraid": "qo'rqqan",
+            "agree": "rozi bo'lmoq",
+            "angry": "jahli chiqqan",
+            "approach": "yondashuv",
+            "arrive": "yetib kelmoq",
+            "attack": "hujum qilmoq",
+            "bottom": "tubi",
+            "clever": "aqlli",
+            "cruel": "shafqatsiz",
+            "finally": "nihoyat",
+            "hide": "berkitmoq",
+            "hunt": "ov qilmoq",
+            "laugh": "kulmoq",
+            "lot": "ko'p",
+            "middle": "o'rta",
+            "moment": "lahza",
+            "pleased": "xursand",
+            "project": "loyiha",
+            "promise": "va'da bermoq",
+            "reply": "javob bermoq",
+            "safe": "xavfsiz",
+            "trick": "hiyla",
+            "well": "yaxshi",
+            "word": "so'z",
+            "education": "ta'lim",
+            "knowledge": "bilim"
         };
 
         let defaultDB = {
@@ -1020,11 +1020,11 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v11'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v12'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v11')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v12')) || {
             1: { 1: [
                 { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
                 { en: "attack", uz: ["hujum qilmoq"] }, { en: "bottom", uz: ["tubi"] }, { en: "clever", uz: ["aqlli"] }, { en: "cruel", uz: ["shafqatsiz"] },
@@ -1035,7 +1035,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v11')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v12')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1045,21 +1045,20 @@
 
         let currentActiveWords = [];
         let currentIndex = 0;
-        let currentQuestionType = 'uz2en'; 
         let correctInThisSession = 0;
         let wrongInThisSession = 0;
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v11', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v12', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v11', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v12', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v11', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v12', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1171,11 +1170,7 @@
             lines.forEach(line => {
                 let parts = line.split(/[-–—]/);
                 let eng = parts[0].trim().toLowerCase();
-                let uzTr = parts.length > 1 ? [parts[1].trim().toLowerCase()] : null;
-
-                if (!uzTr) {
-                    uzTr = autoDictionary[eng] || [eng];
-                }
+                let uzTr = uzTranslationsDB[eng] ? [uzTranslationsDB[eng]] : [eng];
 
                 parsedWords.push({
                     en: eng,
@@ -1240,7 +1235,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v11')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v12')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }, { en: "education", uz: ["ta'lim"] }];
@@ -1262,13 +1257,9 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // Doimiy ravishda avval UZ berilib, o'quvchidan inglizchasini yozish talab etiladi
-                currentQuestionType = 'uz2en';
                 let wordObj = currentActiveWords[currentIndex];
-                let promptText = "";
-
-                let uzDisplay = (wordObj.uz && wordObj.uz[0]) ? wordObj.uz[0] : wordObj.en;
-                promptText = "UZ: " + uzDisplay + " (Inglizchaga tarjima qiling)";
+                let uzDisplay = (wordObj.uz && wordObj.uz[0]) ? wordObj.uz[0] : (uzTranslationsDB[wordObj.en] || wordObj.en);
+                let promptText = "UZ: " + uzDisplay + " (Inglizchaga tarjima qiling)";
 
                 document.getElementById('currentPromptWord').innerText = promptText;
                 document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + currentActiveWords.length + " so'z";
@@ -1351,7 +1342,7 @@
             }
         }
 
-        // --- KUCHAYTIRILGAN MA'NO VA GRAMMATIKA TAHLILI (AI) ---
+        // --- KUCHAYTIRILGAN TO'LIQ AI WRITING TAHLILI ---
         function loadStudentAssignments() {
             let container = document.getElementById('studentAssignmentsList');
             if (!container) return;
@@ -1418,22 +1409,23 @@
                 errorsFound.push("❌ Imlo xatosi: 'frend' so'zi noto'g'ri yozilgan. To'g'ri yozilishi: **'friend'**.");
             }
 
-            // 3. Grammatik va bog'lovchi fe'l xatolari (I is, yosh xatolari)
+            // 3. Grammatik va bog'lovchi fe'l hamda artikl xatolari (masalan: "a 12 years old")
             if (lowerText.includes("i is") || lowerText.includes("he am") || lowerText.includes("she are")) {
                 errorsFound.push("❌ Grammatik tuzilish xatosi: Ega va kesim moslashuvida xato bor (masalan: 'I is' o'rniga **'I am'** bo'lishi kerak).");
             }
 
-            if (lowerText.includes("year old") && !lowerText.includes("years old")) {
+            if (lowerText.includes("a 12 years old") || lowerText.includes("a 13 years old") || lowerText.includes("a years old")) {
+                errorsFound.push("❌ Grammatik xato: Yoshni bildirganda 'a' artikli ishlatilmaydi (masalan: **'I am 12 years old'** deb yoziladi).");
+            } else if (lowerText.includes("year old") && !lowerText.includes("years old")) {
                 errorsFound.push("❌ Grammatik xato: Yoshni bildirishda 'years old' ishlatiladi ('year old' xato).");
             }
 
-            // 4. Ma'no va kontekst xatolarini chuqur tahlil qilish (masalan: "book slow", "book is book" yoki noto'g'ri qo'llanilgan so'zlar)
-            if (lowerText.includes("is slow") || lowerText.includes("book slow")) {
-                warningsFound.push("⚠️ Ma'no va kontekst xatosi: 'slow' (sekin) so'zi kitob yoki filmga nisbatan mantiqan noto'g'ri qo'llanilgan. Kitob uchun **'interesting'** (qiziqarli), **'exciting'** (ajoyib) yoki **'boring'** (zerikarli) so'zlarini ishlating.");
+            // 4. Mantiqiy va kontekst xatolarini chuqur tekshirish (masalan: "sokin", "slow", ma'nosiz so'zlar)
+            if (lowerText.includes("sokin") || lowerText.includes("is sokin")) {
+                warningsFound.push("⚠️ Mantiqiy va ma'no xatosi: 'sokin' so'zi o'zbekcha bo'lib qolgan yoki kitob/film mavzusiga mos kelmaydi. Kitob uchun **'interesting'** (qiziqarli), **'exciting'** (ajoyib) yoki **'wonderful'** so'zlarini ishlating.");
             }
-
-            if (lowerText.includes("is book") || lowerText.includes("is movie")) {
-                warningsFound.push("⚠️ Mantiqiy xato: Jumlada so'z takrorlanib qolgan yoki mazmuni to'liq ochilmagan (masalan: 'my favorite book is book' o'rniga kitob nomini yozing).");
+            if (lowerText.includes("is slow") || lowerText.includes("book slow")) {
+                warningsFound.push("⚠️ Ma'no va kontekst xatosi: 'slow' so'zi kitobga nisbatan noto'g'ri qo'llanilgan. Uni **'interesting'** yoki **'good'** so'ziga o'zgartiring.");
             }
 
             // 5. Gaplar soni bo'yicha talab
@@ -1492,7 +1484,7 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v11'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v12'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1522,7 +1514,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v11'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v12'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
