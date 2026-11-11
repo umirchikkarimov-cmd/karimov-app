@@ -599,7 +599,7 @@
                 <input type="password" id="password" placeholder="Parol">
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">O'qituvchi logini: <b>admin</b> | Parol: <b>admin123</b></p>
+            <p style="font-size: 10px; color: #64748b; margin-top: 15px;">O'qituvchi logini: <b>ukarimov</b> | Parol: <b>admin2026</b></p>
         </div>
     </div>
 
@@ -883,6 +883,11 @@
                 return;
             }
 
+            if (studentsDB[login]) {
+                alert("Bu login allaqachon mavjud!");
+                return;
+            }
+
             studentsDB[login] = {
                 name: name,
                 pass: pass,
@@ -902,7 +907,7 @@
             alert("O'quvchi muvaffaqiyatli qo'shildi!");
         }
 
-        // 2. Kirish jarayoni
+        // 2. Kirish jarayoni (O'qituvchi va faqat ro'yxatdagi o'quvchilar uchun)
         function executeLogin() {
             let loginInput = document.getElementById('phone').value.trim().toLowerCase();
             let passInput = document.getElementById('password').value.trim();
@@ -912,29 +917,21 @@
                 return;
             }
 
-            // O'qituvchi admin tekshiruvi
-            if (loginInput === "admin" && passInput === "admin123") {
+            // O'qituvchi (Admin) maxsus paroli
+            if (loginInput === "ukarimov" && passInput === "admin2026") {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminScreen').style.display = 'flex';
                 loadAdminTable();
                 return;
             }
 
-            // Agar o'quvchi bazada oldindan bo'lmasa, uni avtomatik ro'yxatdan o'tkazib ochib beradi
+            // O'quvchi bazada bormi tekshirish
             if (!studentsDB[loginInput]) {
-                studentsDB[loginInput] = {
-                    name: "O'quvchi (" + loginInput + ")",
-                    pass: passInput,
-                    book1: 0,
-                    book2: 0,
-                    xp: 0,
-                    totalCorrect: 0,
-                    totalAttempts: 0
-                };
-                saveDB();
+                alert("Bunday o'quvchi topilmadi! Iltimos, o'qituvchingizdan login oling.");
+                return;
             }
 
-            // Parolni tekshirish (Endi xohlagan parol bilan kirsa, parolini qabul qiladi yoki o'sha parolni saqlaydi)
+            // O'quvchi parolini tekshirish
             if (studentsDB[loginInput].pass !== passInput) {
                 alert("Parol noto'g'ri! Iltimos, to'g'ri parolni kiriting.");
                 return;
