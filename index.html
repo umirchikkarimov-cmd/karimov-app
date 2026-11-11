@@ -875,7 +875,7 @@
                 <div class="admin-sub-section" id="adminSubVocabSection">
                     <div class="general-card">
                         <h3>📖 Lug'at yuklash (Essential 1 & 2 - Unitlar)</h3>
-                        <p>Qaysi kitob va unit uchun lug'at yuklamoqchisiz?</p>
+                        <p>Qaysi kitob va unit uchun lug'at kiritmoqchisiz?</p>
                         
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <select id="adminUploadBookSelect" class="task-input" onchange="renderAdminUnitList()">
@@ -885,7 +885,7 @@
                         </div>
 
                         <div id="adminUnitUploadContainer" style="margin-top: 14px;">
-                            <!-- Dinamik unitlar va fayl yuklash maydonlari -->
+                            <!-- Dinamik unitlar va matn kiritish maydonlari -->
                         </div>
                     </div>
                 </div>
@@ -996,9 +996,8 @@
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        // Unit lug'atlari bazasi (Kitob 1 va Kitob 2 uchun 20 tadan unit)
         let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_db')) || {
-            1: { 1: [{ en: "Education", uz: ["ta'lim", "talim"] }, { en: "Knowledge", uz: ["bilim"] }] }, // Default Unit 1
+            1: { 1: [{ en: "Education", uz: ["ta'lim", "talim"] }, { en: "Knowledge", uz: ["bilim"] }] },
             2: {}
         };
 
@@ -1109,7 +1108,8 @@
 
             for(let u = 1; u <= 20; u++) {
                 let existingData = customUnitsDB[bookVal] && customUnitsDB[bookVal][u];
-                let statusText = existingData ? `<b style="color:#34d399;">✅ Lug'at yuklangan (${existingData.length} ta so'z)</b>` : `<b style="color:#64748b;">Hozircha bo'sh</b>`;
+                let existingText = existingData ? existingData.map(w => `${w.en} - ${w.uz[0]}`).join('\n') : '';
+                let statusText = existingData ? `<b style="color:#34d399;">✅ (${existingData.length} ta so'z)</b>` : `<b style="color:#64748b;">Bo'sh</b>`;
                 
                 container.innerHTML += `
                     <div class="general-card" style="margin-bottom: 10px;">
@@ -1117,61 +1117,49 @@
                             <b style="color:#f472b6;">Unit ${u}</b>
                             <span>${statusText}</span>
                         </div>
-                        <input type="file" id="file_b${bookVal}_u${u}" class="task-input" accept=".docx,.txt" style="margin-bottom:6px; font-size:11px;">
-                        <div style="display:flex; gap:6px;">
-                            <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="uploadUnitFile(${bookVal}, ${u})">Yuklash / Yangilash</button>
-                            ${existingData ? `<button class="btn-delete" onclick="deleteUnitFile(${bookVal}, ${u})">O'chirish</button>` : ''}
+                        <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="So'zlarni yozing (Har bir qatorda: English - O'zbekcha)&#10;Masalan: Apple - Olma">${existingText}</textarea>
+                        <div style="display:flex; gap:6px; margin-top:6px;">
+                            <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
+                            ${existingData ? `<button class="btn-delete" onclick="deleteUnitWords(${bookVal}, ${u})">O'chirish</button>` : ''}
                         </div>
                     </div>
                 `;
             }
         }
 
-        function uploadUnitFile(bookNum, unitNum) {
-            let fileInput = document.getElementById(`file_b${bookNum}_u${unitNum}`);
-            if(fileInput.files.length === 0) {
-                alert("Iltimos, Word (.docx) yoki matn faylini tanlang!");
+        function saveUnitWords(bookNum, unitNum) {
+            let textVal = document.getElementById(`text_b${bookNum}_u${unitNum}`).value.trim();
+            if(!textVal) {
+                alert("Iltimos, so'zlarni kiriting!");
                 return;
             }
 
-            // Word fayldan o'qish simulyatsiyasi va avtomatik parse qilish
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                // Oddiy matn yoki word parselash: Har bir qatorda "English - O'zbekcha" formatida o'qib olamiz
-                let content = e.target.result;
-                let lines = content.split('\n').filter(Boolean);
-                let parsedWords = [];
+            let lines = textVal.split('\n').filter(Boolean);
+            let parsedWords = [];
 
-                if(lines.length > 0) {
-                    lines.forEach(line => {
-                        let parts = line.split('-');
-                        if(parts.length >= 2) {
-                            parsedWords.push({
-                                en: parts[0].trim(),
-                                uz: [parts[1].trim().toLowerCase()]
-                            });
-                        }
+            lines.forEach(line => {
+                let parts = line.split('-');
+                if(parts.length >= 2) {
+                    parsedWords.push({
+                        en: parts[0].trim(),
+                        uz: [parts[1].trim().toLowerCase()]
                     });
                 }
+            });
 
-                // Agar fayl binary (.docx) bo'lib oddiy o'qib bo'lmasa, test uchun standart bazani yuklaymiz
-                if(parsedWords.length === 0) {
-                    parsedWords = [
-                        { en: `Book${bookNum}U${unitNum}-Word1`, uz: ["tarjima1"] },
-                        { en: `Book${bookNum}U${unitNum}-Word2`, uz: ["tarjima2"] }
-                    ];
-                }
+            if(parsedWords.length === 0) {
+                alert("Format xato! Har bir qator 'So'z - Tarjima' ko'rinishida bo'lishi kerak.");
+                return;
+            }
 
-                if(!customUnitsDB[bookNum]) customUnitsDB[bookNum] = {};
-                customUnitsDB[bookNum][unitNum] = parsedWords;
-                saveUnitsDB();
-                renderAdminUnitList();
-                alert(`Essential ${bookNum} - Unit ${unitNum} uchun lug'atlar muvaffaqiyatli yuklandi va yangilandi!`);
-            };
-            reader.readAsText(fileInput.files[0]);
+            if(!customUnitsDB[bookNum]) customUnitsDB[bookNum] = {};
+            customUnitsDB[bookNum][unitNum] = parsedWords;
+            saveUnitsDB();
+            renderAdminUnitList();
+            alert(`Essential ${bookNum} - Unit ${unitNum} lug'atlari muvaffaqiyatli saqlandi va yangilandi!`);
         }
 
-        function deleteUnitFile(bookNum, unitNum) {
+        function deleteUnitWords(bookNum, unitNum) {
             if(confirm(`Essential ${bookNum} - Unit ${unitNum} lug'atini o'chirmoqchimisiz?`)) {
                 if(customUnitsDB[bookNum] && customUnitsDB[bookNum][unitNum]) {
                     delete customUnitsDB[bookNum][unitNum];
@@ -1217,7 +1205,6 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            // O'qituvchi yuklagan lug'atni olish, agar bo'lmasa default fallback
             if(customUnitsDB[bookNum] && customUnitsDB[bookNum][unitNum] && customUnitsDB[bookNum][unitNum].length > 0) {
                 currentActiveWords = customUnitsDB[bookNum][unitNum];
             } else {
