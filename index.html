@@ -987,28 +987,29 @@
 
     <script>
         const autoDictionary = {
-            "middle": ["o'rta", "ortacha", "o'rtada"],
+            "afraid": ["qo'rqqan", "qorqqan"],
+            "agree": ["rozi bo'lmoq", "rozi"],
+            "angry": ["jahli chiqqan", "g'azablangan", "qahrlangan"],
+            "arrive": ["yetib kelmoq", "kelmoq"],
+            "attack": ["hujum qilmoq", "hujum"],
+            "bottom": ["tubi", "tagi", "osti"],
+            "clever": ["aqlli", "zukko"],
+            "cruel": ["shafqatsiz", "bag'ritosh"],
+            "finally": ["nihoyat", "oxir-oqibat"],
+            "hide": ["berkitmoq", "yashirmoq"],
+            "hunt": ["ov qilmoq", "ov"],
+            "lot": ["ko'p", "ko'pgina"],
+            "middle": ["o'rta", "ortacha"],
+            "moment": ["lahza", "on", "payt"],
+            "pleased": ["xursand", "mamnun"],
+            "promise": ["va'da bermoq", "vada"],
+            "reply": ["javob bermoq", "javob"],
+            "safe": ["xavfsiz", "tinch"],
+            "trick": ["hiyla", "aldamoq"],
+            "well": ["yaxshi", "quduq"],
             "word": ["so'z", "soz"],
-            "education": ["ta'lim", "talim", "o'qitish"],
-            "knowledge": ["bilim", "axborot"],
-            "success": ["muvaffaqiyat", "omad"],
-            "book": ["kitob"],
-            "pen": ["ruchka", "qalam"],
-            "water": ["suv"],
-            "apple": ["olma"],
-            "school": ["maktab"],
-            "teacher": ["o'qituvchi", "ustoz"],
-            "student": ["o'quvchi", "talaba"],
-            "read": ["o'qimoq"],
-            "write": ["yozmoq"],
-            "friend": ["do'st", "dost"],
-            "family": ["oila"],
-            "house": ["uy"],
-            "car": ["mashina", "avtomobil"],
-            "dog": ["it"],
-            "cat": ["mushuk"],
-            "sun": ["quyosh"],
-            "moon": ["oy"]
+            "education": ["ta'lim", "talim"],
+            "knowledge": ["bilim"]
         };
 
         let defaultDB = {
@@ -1021,12 +1022,14 @@
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_v5')) || {
+        // Universal yagona kalit orqali ma'lumotlar saqlanadi
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v6')) || {
             1: { 1: [
-                { en: "middle", uz: ["o'rta", "ortacha"] },
-                { en: "word", uz: ["so'z", "soz"] },
-                { en: "education", uz: ["ta'lim", "talim"] },
-                { en: "knowledge", uz: ["bilim"] }
+                { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
+                { en: "attack", uz: ["hujum qilmoq"] }, { en: "bottom", uz: ["tubi"] }, { en: "clever", uz: ["aqlli"] }, { en: "cruel", uz: ["shafqatsiz"] },
+                { en: "finally", uz: ["nihoyat"] }, { en: "hide", uz: ["berkitmoq"] }, { en: "hunt", uz: ["ov qilmoq"] }, { en: "lot", uz: ["ko'p"] },
+                { en: "middle", uz: ["o'rta"] }, { en: "moment", uz: ["lahza"] }, { en: "pleased", uz: ["xursand"] }, { en: "promise", uz: ["va'da bermoq"] },
+                { en: "reply", uz: ["javob bermoq"] }, { en: "safe", uz: ["xavfsiz"] }, { en: "trick", uz: ["hiyla"] }, { en: "well", uz: ["yaxshi"] }
             ] },
             2: {}
         };
@@ -1050,7 +1053,7 @@
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_custom_units_v5', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v6', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
@@ -1142,7 +1145,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="4" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1182,7 +1185,7 @@
             customUnitsDB[bookNum][unitNum] = parsedWords;
             saveUnitsDB();
             renderAdminUnitList();
-            alert(`Essential ${bookNum} - Unit ${unitNum} so'zlari muvaffaqiyatli saqlandi! (${parsedWords.length} ta so'z)`);
+            alert(`Essential ${bookNum} - Unit ${unitNum} muvaffaqiyatli saqlandi! Jami: ${parsedWords.length} ta so'z.`);
         }
 
         function deleteUnitWords(bookNum, unitNum) {
@@ -1234,11 +1237,12 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            // Har safar unitga kirganda saqlangan ma'lumotlar bazasidan yangi so'zlarni to'g'ridan-to'g'ri o'qib olamiz
-            let latestSavedData = JSON.parse(localStorage.getItem('kar_units_v5')) || customUnitsDB;
-            let wordsList = (latestSavedData[bookNum] && latestSavedData[bookNum][unitNum] && latestSavedData[bookNum][unitNum].length > 0) 
-                ? latestSavedData[bookNum][unitNum] 
-                : [{ en: "middle", uz: ["o'rta", "ortacha"] }, { en: "word", uz: ["so'z", "soz"] }, { en: "education", uz: ["ta'lim", "talim"] }];
+            // Har safar o'quvchi imtihonni boshlaganda xotiradagi eng so'nggi ma'lumotlarni tortib olamiz
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v6')) || customUnitsDB;
+            
+            let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
+                ? latestMasterDB[bookNum][unitNum] 
+                : [{ en: "word", uz: ["so'z"] }, { en: "education", uz: ["ta'lim"] }];
 
             currentActiveWords = [...wordsList].sort(() => Math.random() - 0.5);
 
