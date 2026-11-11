@@ -875,7 +875,7 @@
                 <div class="admin-sub-section" id="adminSubVocabSection">
                     <div class="general-card">
                         <h3>📖 Lug'at yuklash (Essential 1 & 2 - Unitlar)</h3>
-                        <p>Qaysi kitob va unit uchun lug'at kiritmoqchisiz? (Fayl yuklashingiz yoki matn ko'rinishida yozishingiz mumkin)</p>
+                        <p>Qaysi kitob va unit uchun lug'at kiritmoqchisiz?</p>
                         
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <select id="adminUploadBookSelect" class="task-input" onchange="renderAdminUnitList()">
@@ -885,7 +885,7 @@
                         </div>
 
                         <div id="adminUnitUploadContainer" style="margin-top: 14px;">
-                            <!-- Dinamik unitlar, fayl yuklash va matn kiritish maydonlari -->
+                            <!-- Dinamik unitlar va matn kiritish maydonlari -->
                         </div>
                     </div>
                 </div>
@@ -1118,12 +1118,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <label style="font-size:10px; color:#8b9bb4; display:block; margin-bottom:3px;">1. Fayl (.txt yoki matnli fayl) yuklash:</label>
-                            <input type="file" id="file_b${bookVal}_u${u}" class="task-input" accept=".txt,.doc,.docx" style="font-size:11px;" onchange="handleFileUpload(${bookVal}, ${u})">
-                        </div>
-                        <div style="margin-bottom: 6px;">
-                            <label style="font-size:10px; color:#8b9bb4; display:block; margin-bottom:3px;">2. Yoki qo'lda kiritish (English - O'zbekcha):</label>
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Masalan: Apple - Olma">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="So'zlarni yozing (Masalan: Apple - Olma) yoki fayl yuklang">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1134,22 +1129,10 @@
             }
         }
 
-        function handleFileUpload(bookNum, unitNum) {
-            let fileInput = document.getElementById(`file_b${bookNum}_u${unitNum}`);
-            if(fileInput.files.length === 0) return;
-
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let content = e.target.result;
-                document.getElementById(`text_b${bookNum}_u${unitNum}`).value = content;
-            };
-            reader.readAsText(fileInput.files[0]);
-        }
-
         function saveUnitWords(bookNum, unitNum) {
             let textVal = document.getElementById(`text_b${bookNum}_u${unitNum}`).value.trim();
             if(!textVal) {
-                alert("Iltimos, so'zlarni kiriting yoki fayl yuklang!");
+                alert("Iltimos, so'zlarni kiriting!");
                 return;
             }
 
@@ -1157,7 +1140,7 @@
             let parsedWords = [];
 
             lines.forEach(line => {
-                let parts = line.split('-');
+                let parts = line.split(/[-–—]/); // Har qanday turdagi chiziqchani qabul qiladi (- or – or —)
                 if(parts.length >= 2) {
                     parsedWords.push({
                         en: parts[0].trim(),
@@ -1167,7 +1150,7 @@
             });
 
             if(parsedWords.length === 0) {
-                alert("Format xato! Har bir qator 'So'z - Tarjima' ko'rinishida bo'lishi kerak.");
+                alert("Iltimos, formatga rioya qiling! Masalan: Apple - Olma");
                 return;
             }
 
@@ -1175,7 +1158,7 @@
             customUnitsDB[bookNum][unitNum] = parsedWords;
             saveUnitsDB();
             renderAdminUnitList();
-            alert(`Essential ${bookNum} - Unit ${unitNum} lug'atlari muvaffaqiyatli saqlandi va yangilandi!`);
+            alert(`Essential ${bookNum} - Unit ${unitNum} lug'atlari muvaffaqiyatli saqlandi!`);
         }
 
         function deleteUnitWords(bookNum, unitNum) {
