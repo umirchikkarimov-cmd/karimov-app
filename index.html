@@ -637,7 +637,6 @@
                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">👁️</button>
             </div>
             <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-            <p style="font-size: 10px; color: #64748b; margin-top: 20px;">Admin: <b>ukarimov</b> / <b>admin2026</b></p>
         </div>
     </div>
 
@@ -909,7 +908,7 @@
                 </div>
             </div>
 
-            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun + AI Writing tahlili bilan) -->
+            <!-- TAB 9: TOPSHIRIQLAR (O'quvchilar uchun + Kuchaytirilgan AI Writing tahlili) -->
             <div class="tab-content" id="tabStudentAssignments">
                 <div class="general-card">
                     <h3>📋 O'qituvchi yuborgan topshiriqlar</h3>
@@ -1018,11 +1017,11 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v7'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v8'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v7')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v8')) || {
             1: { 1: [
                 { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
                 { en: "attack", uz: ["hujum qilmoq"] }, { en: "bottom", uz: ["tubi"] }, { en: "clever", uz: ["aqlli"] }, { en: "cruel", uz: ["shafqatsiz"] },
@@ -1033,7 +1032,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v7')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v8')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1049,15 +1048,15 @@
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v7', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v8', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v7', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v8', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v7', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v8', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1238,7 +1237,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v7')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v8')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }, { en: "education", uz: ["ta'lim"] }];
@@ -1277,7 +1276,6 @@
                 document.getElementById('taskResultMsg').innerText = "";
                 document.getElementById('taskInputGroup').style.display = 'flex';
             } else {
-                // Unit tugatilganda natijani saqlash
                 finishExamUnit();
             }
         }
@@ -1297,7 +1295,6 @@
                 if (!st.unitScores) st.unitScores = {};
                 
                 let key = `b${activeExamBook}_u${activeExamUnit}`;
-                // Agar avval ishlanmagan yoki yuqoriroq natija bo'lsa yangilash
                 if (!st.unitScores[key] || percent > st.unitScores[key].percent) {
                     st.unitScores[key] = {
                         book: activeExamBook,
@@ -1338,7 +1335,6 @@
                 correctInThisSession++;
                 correctWordsInCurrentUnitSet.add(wordObj.en);
 
-                // Unikal o'zlashtirilgan so'zlarga qo'shish (takroran hisoblanmaydi)
                 st.learnedWords[wordObj.en] = true;
                 st.xp += 15;
 
@@ -1360,7 +1356,7 @@
             }
         }
 
-        // --- AI WRITING TAHLILI ---
+        // --- KUCHAYTIRILGAN AI WRITING TAHLILI ---
         function loadStudentAssignments() {
             let container = document.getElementById('studentAssignmentsList');
             if (!container) return;
@@ -1377,9 +1373,9 @@
                 let submittedData = st.submissions[item.id];
                 let submittedText = submittedData ? submittedData.text : '';
                 let feedbackHtml = submittedData ? `
-                    <div style="margin-top:10px; padding:10px; background:#090b16; border:1px solid #232943; border-radius:10px;">
+                    <div style="margin-top:10px; padding:12px; background:#090b16; border:1px solid #232943; border-radius:10px;">
                         <b style="color:#34d399;">🤖 AI Tahlil Natijasi:</b>
-                        <p style="font-size:11px; color:#cbd5e1; margin-top:4px;">${submittedData.feedback}</p>
+                        <div style="font-size:11px; color:#cbd5e1; margin-top:6px; line-height:1.5;">${submittedData.feedback}</div>
                     </div>
                 ` : '';
 
@@ -1406,37 +1402,62 @@
                 return;
             }
 
-            // AI tahlil simulyatsiyasi (grammatika, so'zlar va gap tuzilishi)
-            let sentences = textVal.split(/[.!?]+/).filter(Boolean);
+            // Real xatoliklarni aniqlaydigan AI tahlil mexanizmi
+            let sentences = textVal.split(/[.!?]+/).filter(s => s.trim().length > 0);
             let wordCount = textVal.split(/\s+/).length;
-            let hasCommonErrors = textVal.toLowerCase().includes("i go") || textVal.toLowerCase().includes("he go") || textVal.toLowerCase().includes("she like");
             
-            let feedback = "";
-            if (sentences.length < 2) {
-                feedback = `⚠️ Matn juda qisqa (${sentences.length} ta gap). Ingliz tilida to'liqroq va kamida 3-4 ta bog'langan gaplar tuzish tavsiya etiladi. `;
-            } else {
-                feedback = `✅ Ajoyib! Jami ${sentences.length} ta gap va ${wordCount} ta so'z yozildi. `;
+            let errorsFound = [];
+            let warningsFound = [];
+
+            // 1. Kichik harf bilan yozilgan "i" olmoshini tekshirish
+            let wordsArr = textVal.split(/\s+/);
+            if (wordsArr.includes("i") || wordsArr.includes("i'm")) {
+                errorsFound.чити = true;
+                errorsFound.push("❌ Ingliz tilida 'I' olmoshi har doim **katta harf** bilan yozilishi kerak (masalan: 'i' emas, 'I').");
             }
 
-            if (hasCommonErrors) {
-                feedback += `Grammatik xato aniqlandi: Fe'l tuslanishi yoki zamonlarda kichik xatolar bor (masalan: "He go" o'rniga "He goes" ishlatilishi kerak). `;
+            // 2. Grammatik xatolar va jumlalar tuzilishini tekshirish (masalan: "i is 13 year old")
+            let lowerText = textVal.toLowerCase();
+            if (lowerText.includes("i is") || lowerText.includes("he am") || lowerText.includes("she are")) {
+                errorsFound.push("❌ Grammatik xato: Bog'lovchi fe'l (to be) noto'g'ri qo'llanilgan (masalan: 'I is' o'rniga **'I am'** bo'lishi kerak).");
+            }
+
+            if (lowerText.includes("year old") && !lowerText.includes("years old")) {
+                errorsFound.push("❌ Grammatik xato: Yoshni bildirishda ko'plik qo'shimchasi unutildi ('year old' o'rniga **'years old'** ishlatilishi shart).");
+            }
+
+            // 3. Mavzuga moslik va gaplar soni
+            if (sentences.length < 3) {
+                warningsFound.push("⚠️ Hajm bo'yicha ogohlantirish: Mavzuda kamida 3 ta to'liq gap yozish talab etilgan edi (Sizda ${sentences.length} ta gap bor).");
+            }
+
+            let feedbackHtml = "";
+            if (errorsFound.length === 0 && warningsFound.length === 0) {
+                feedbackHtml = `<span style="color:#34d399;"><b>Ajoyib!</b> Jami ${sentences.length} ta gap va ${wordCount} ta so'z yozildi. Grammatik va so'z tuzilishi bo'yicha jiddiy xatolar topilmadi. Gaplar mazmuni ravon yozilgan! 🌟</span>`;
             } else {
-                feedback += `Grammatik va so'z tuzilishi bo'yicha jiddiy xatolar topilmadi. Gaplar mazmuni ravon yozilgan! 🌟`;
+                feedbackHtml = `<b style="color:#f87171;">Aniqlangan xatolar va tavsiyalar:</b><br><ul style="margin-left: 15px; margin-top: 6px; display:flex; flex-direction:column; gap:4px;">`;
+                errorsFound.forEach(err => {
+                    feedbackHtml += `<li style="color:#f87171;">${err}</li>`;
+                });
+                warningsFound.forEach(warn => {
+                    feedbackHtml += `<li style="color:#fbbf24;">${warn}</li>`;
+                });
+                feedbackHtml += `</ul><p style="margin-top:6px; color:#38bdf8; font-size:10px;">💡 Yuqoridagi xatolarni to'g'rilab, javobingizni qayta yuborishingiz mumkin.</p>`;
             }
 
             let st = studentsDB[currentStudentId];
             if (!st.submissions) st.submissions = {};
-            st.submissions[assignmentId] = { text: textVal, feedback: feedback };
+            st.submissions[assignmentId] = { text: textVal, feedback: feedbackHtml };
             saveDB();
 
             let feedContainer = document.getElementById(`feedbackContainer_${assignmentId}`);
             feedContainer.innerHTML = `
-                <div style="margin-top:10px; padding:10px; background:#090b16; border:1px solid #232943; border-radius:10px;">
+                <div style="margin-top:10px; padding:12px; background:#090b16; border:1px solid #232943; border-radius:10px;">
                     <b style="color:#34d399;">🤖 AI Tahlil Natijasi:</b>
-                    <p style="font-size:11px; color:#cbd5e1; margin-top:4px;">${feedback}</p>
+                    <div style="font-size:11px; color:#cbd5e1; margin-top:6px; line-height:1.5;">${feedbackHtml}</div>
                 </div>
             `;
-            alert("Topshiriq muvaffaqiyatli tahlil qilindi va saqlandi!");
+            alert("Topshiriq tahlil qilindi!");
         }
 
         function executeLogin() {
@@ -1461,7 +1482,7 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v7'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v8'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1491,7 +1512,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v7'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v8'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
@@ -1520,7 +1541,6 @@
 
             let uniqueLearnedWordsCount = st.learnedWords ? Object.keys(st.learnedWords).length : 0;
             
-            // Jami unitlar foizini hisoblash
             let unitScoresArr = st.unitScores ? Object.values(st.unitScores) : [];
             let totalPercentSum = unitScoresArr.reduce((acc, curr) => acc + curr.percent, 0);
             let avgPercent = unitScoresArr.length > 0 ? Math.round(totalPercentSum / unitScoresArr.length) : 0;
@@ -1532,7 +1552,6 @@
             document.getElementById('reportWords').innerText = uniqueLearnedWordsCount + " ta";
             document.getElementById('reportPercent').innerText = avgPercent + "%";
 
-            // Unitlar bo'yicha ko'rsatkichlar jadvalini to'ldirish
             let perfList = document.getElementById('unitPerformanceList');
             if (perfList) {
                 perfList.innerHTML = '';
