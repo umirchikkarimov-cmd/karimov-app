@@ -875,7 +875,7 @@
                 <div class="admin-sub-section" id="adminSubVocabSection">
                     <div class="general-card">
                         <h3>📖 Lug'at yuklash (Essential 1 & 2 - Unitlar)</h3>
-                        <p>Qaysi kitob va unit uchun inglizcha so'zlarni kiritmoqchisiz? (Har bir qatorda bittadan inglizcha so'z yozing)</p>
+                        <p>Faqat inglizcha so'zni yoki "English - O'zbekcha" formatida kiritishingiz mumkin.</p>
                         
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <select id="adminUploadBookSelect" class="task-input" onchange="renderAdminUnitList()">
@@ -885,7 +885,7 @@
                         </div>
 
                         <div id="adminUnitUploadContainer" style="margin-top: 14px;">
-                            <!-- Dinamik unitlar va faqat inglizcha so'z kiritish maydonlari -->
+                            <!-- Dinamik unitlar -->
                         </div>
                     </div>
                 </div>
@@ -986,8 +986,9 @@
     </div>
 
     <script>
-        // Avtomatik lug'at bazasi (Inglizcha so'z kiritilsa, tizim uning tarjimasini avtomatik taniydi)
+        // Kengaytirilgan lug'at bazasi
         const autoDictionary = {
+            "word": ["so'z", "soz"],
             "education": ["ta'lim", "talim", "o'qitish"],
             "knowledge": ["bilim", "axborot"],
             "success": ["muvaffaqiyat", "omad"],
@@ -1000,7 +1001,7 @@
             "student": ["o'quvchi", "talaba"],
             "read": ["o'qimoq"],
             "write": ["yozmoq"],
-            "friend": ["do'st"],
+            "friend": ["do'st", "dost"],
             "family": ["oila"],
             "house": ["uy"],
             "car": ["mashina", "avtomobil"],
@@ -1021,7 +1022,7 @@
         saveDB();
 
         let customUnitsDB = JSON.parse(localStorage.getItem('karimov_custom_units_db')) || {
-            1: { 1: [{ en: "Education", uz: ["ta'lim", "talim"] }, { en: "Knowledge", uz: ["bilim"] }] },
+            1: { 1: [{ en: "Word", uz: ["so'z", "soz"] }, { en: "Education", uz: ["ta'lim", "talim"] }, { en: "Knowledge", uz: ["bilim"] }] },
             2: {}
         };
 
@@ -1034,9 +1035,9 @@
         let activeExamUnit = 1;
 
         const defaultFallbackWords = [
+            { en: "Word", uz: ["so'z", "soz"] },
             { en: "Education", uz: ["ta'lim", "talim"] },
-            { en: "Knowledge", uz: ["bilim"] },
-            { en: "Success", uz: ["muvaffaqiyat", "omad"] }
+            { en: "Knowledge", uz: ["bilim"] }
         ];
 
         let currentActiveWords = [];
@@ -1132,7 +1133,7 @@
 
             for(let u = 1; u <= 20; u++) {
                 let existingData = customUnitsDB[bookVal] && customUnitsDB[bookVal][u];
-                let existingText = existingData ? existingData.map(w => w.en).join('\n') : '';
+                let existingText = existingData ? existingData.map(w => `${w.en} - ${w.uz[0]}`).join('\n') : '';
                 let statusText = existingData ? `<b style="color:#34d399;">✅ (${existingData.length} ta so'z)</b>` : `<b style="color:#64748b;">Bo'sh</b>`;
                 
                 container.innerHTML += `
@@ -1142,7 +1143,7 @@
                             <span>${statusText}</span>
                         </div>
                         <div style="margin-bottom: 6px;">
-                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Faqat inglizcha so'zlarni yozing (Har bir qatorda bittadan)&#10;Masalan:&#10;apple&#10;book&#10;water">${existingText}</textarea>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Masalan:&#10;Word - So'z&#10;Book - Kitob&#10;(yoki faqat Word deb yozing, tizim avto topadi)">${existingText}</textarea>
                         </div>
                         <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
@@ -1164,14 +1165,18 @@
             let parsedWords = [];
 
             lines.forEach(line => {
-                let engWord = line.trim();
-                let lowerEng = engWord.toLowerCase();
-                // Tizim avtomatik tarjimasini bazadan oladi, agar yo'q bo'lsa o'zini qo'yadi
-                let uzTranslations = autoDictionary[lowerEng] || [lowerEng];
+                let parts = line.split(/[-–—]/);
+                let eng = parts[0].trim();
+                let uzTr = parts.length > 1 ? [parts[1].trim().toLowerCase()] : null;
+
+                if (!uzTr) {
+                    let lowerEng = eng.toLowerCase();
+                    uzTr = autoDictionary[lowerEng] || [eng.toLowerCase()];
+                }
 
                 parsedWords.push({
-                    en: engWord,
-                    uz: uzTranslations
+                    en: eng,
+                    uz: uzTr
                 });
             });
 
@@ -1232,7 +1237,6 @@
                 ? customUnitsDB[bookNum][unitNum] 
                 : defaultFallbackWords;
 
-            // So'zlarni har safar aralashtirib (random) berish
             currentActiveWords = [...wordsList].sort(() => Math.random() - 0.5);
 
             currentIndex = 0;
@@ -1248,7 +1252,6 @@
 
         function loadWord() {
             if (currentIndex < currentActiveWords.length) {
-                // Ba'zida inglizchasini so'raydi (en2uz), ba'zida o'zbekchasini (uz2en) aralashtirib
                 currentQuestionType = (Math.random() < 0.5) ? 'en2uz' : 'uz2en';
                 let wordObj = currentActiveWords[currentIndex];
                 let promptText = "";
@@ -1285,7 +1288,7 @@
 
             let isCorrect = false;
             if (currentQuestionType === 'en2uz') {
-                isCorrect = wordObj.uz.includes(userVal);
+                isCorrect = wordObj.uz.some(u => u.toLowerCase() === userVal);
             } else {
                 isCorrect = (userVal === wordObj.en.toLowerCase());
             }
