@@ -9,298 +9,162 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
+
         body {
-            background-color: #0d0f18;
+            background-color: #070913;
             color: #ffffff;
+            padding-top: 70px;
+            padding-bottom: 80px;
             display: flex;
             justify-content: center;
+        }
+
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #0d0f1d;
+            border-bottom: 1px solid #1a1e36;
+            display: flex;
             align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-        }
-        .login-wrapper {
-            width: 100%;
-            max-width: 380px;
-            display: flex;
-            justify-content: center;
-        }
-        .login-card {
-            background: #151828;
-            border: 1.5px solid #22263b;
-            border-radius: 18px;
-            padding: 32px 24px;
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            text-align: center;
-        }
-        .login-card h2 {
-            color: #ffffff;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .login-card p {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .form-group {
-            margin-bottom: 16px;
-            text-align: left;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 13px 16px;
-            background: #1e2238;
-            border: 1.5px solid #2e3553;
-            color: #fff;
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-        }
-        .form-group input:focus {
-            border-color: #7c3aed;
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, #7c3aed, #9333ea);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-        }
-        .dashboard {
-            display: none;
-            width: 100%;
-            max-width: 440px;
-            flex-direction: column;
-        }
-        .header {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            background: #151828;
-            padding: 14px 18px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-            border: 1.5px solid #22263b;
+            padding: 0 16px;
+            z-index: 100;
         }
+
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
-        .brand-icon {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            background: #a855f7;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-weight: bold;
+            font-size: 16px;
         }
-        .brand-title h1 {
-            font-size: 15px;
+
+        .brand-text h1 {
+            font-size: 14px;
             font-weight: 700;
-            color: #fff;
         }
-        .brand-title p {
-            font-size: 11px;
-            color: #94a3b8;
+
+        .brand-text p {
+            font-size: 10px;
+            color: #64748b;
         }
-        .user-badge {
+
+        .nav-right {
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .xp-pill {
-            background: #1e2238;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+            background: #1e1b4b;
             color: #fbbf24;
-            border: 1px solid #2e3553;
-        }
-        .role-pill {
-            background: #1e2238;
-            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #cbd5e1;
-            border: 1px solid #2e3553;
+            border: 1px solid #312e81;
         }
-        .banner {
-            background: #151828;
-            border: 1.5px solid #22263b;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 16px;
+
+        .role-pill {
+            background: #1e293b;
+            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 0 12px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 12px;
         }
-        .banner-icon {
-            color: #34d399;
-            font-size: 20px;
-            background: rgba(52, 211, 153, 0.1);
-            padding: 10px;
-            border-radius: 10px;
+
+        /* Banner */
+        .hero-card {
+            background: linear-gradient(180deg, #2e1065 0%, #170d35 100%);
+            border: 1px solid #4c1d95;
+            border-radius: 18px;
+            padding: 20px;
+            position: relative;
         }
-        .banner-text h3 {
-            font-size: 13px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 2px;
-        }
-        .banner-text p {
-            font-size: 11px;
-            color: #94a3b8;
-        }
-        .exam-card {
-            background: #151828;
-            border: 1.5px solid #22263b;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 12px;
+
+        .hero-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 12px;
         }
-        .exam-info .tags {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 6px;
-            align-items: center;
-        }
-        .tag-badge {
-            background: rgba(168, 85, 247, 0.15);
-            color: #a855f7;
+
+        .badge-purple {
+            background: #4c1d95;
+            color: #c084fc;
             font-size: 10px;
             font-weight: 700;
             padding: 4px 8px;
-            border-radius: 6px;
-            text-transform: uppercase;
+            border-radius: 12px;
         }
-        .tag-badge-blue {
-            background: rgba(56, 189, 248, 0.15);
-            color: #38bdf8;
-        }
-        .pin-code {
+
+        .hero-date {
             font-size: 11px;
             color: #94a3b8;
-            font-weight: 500;
         }
-        .exam-info h2 {
-            font-size: 15px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
+
+        .hero-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            line-height: 1.3;
         }
-        .exam-info p {
-            font-size: 12px;
-            color: #94a3b8;
+
+        .hero-title span {
+            color: #f472b6;
         }
-        .btn-start {
-            background: linear-gradient(135deg, #7c3aed, #9333ea);
-            color: white;
+
+        .hero-desc {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-purple {
+            flex: 1;
+            background: #8b5cf6;
+            color: #fff;
             border: none;
-            padding: 10px 18px;
+            padding: 10px;
             border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
-    </style>
-</head>
-<body>
 
-    <div class="login-wrapper" id="loginScreen">
-        <div class="login-card">
-            <h2>U.Karimov Ta'lim Platformasi</h2>
-            <p>Shaxsiy kabinetga kirish</p>
-            
-            <div class="form-group">
-                <input type="tel" id="phone" placeholder="Telefon raqam (+998...)">
-            </div>
-            <div class="form-group">
-                <input type="password" id="password" placeholder="Parol">
-            </div>
-            <button type="button" class="btn-submit" onclick="executeLogin()">Kirish</button>
-        </div>
-    </div>
-
-    <div class="dashboard" id="dashboardScreen">
-        <div class="header">
-            <div class="brand">
-                <div class="brand-icon">📚</div>
-                <div class="brand-title">
-                    <h1>U.Karimov</h1>
-                    <p>Ta'lim Platformasi</p>
-                </div>
-            </div>
-            <div class="user-badge">
-                <div class="xp-pill">⚡ 1,240 XP</div>
-                <div class="role-pill">O'quvchi</div>
-            </div>
-        </div>
-
-        <div class="banner">
-            <div class="banner-icon">🛡️</div>
-            <div class="banner-text">
-                <h3>Xavfsiz Imtihonlar</h3>
-                <p>Oyna o'zgartirish va copy-paste taqiqlangan</p>
-            </div>
-        </div>
-
-        <div class="exam-card">
-            <div class="exam-info">
-                <div class="tags">
-                    <span class="tag-badge">TEST</span>
-                    <span class="pin-code">PIN: 849201</span>
-                </div>
-                <h2>Asosiy Fanlar Imtihoni</h2>
-                <p>5 savol • 25s taymer</p>
-            </div>
-            <button class="btn-start" onclick="alert('Imtihon boshlanmoqda')">Boshlash ▷</button>
-        </div>
-
-        <div class="exam-card">
-            <div class="exam-info">
-                <div class="tags">
-                    <span class="tag-badge tag-badge-blue">AMALIYOT</span>
-                    <span class="pin-code">PIN: 182938</span>
-                </div>
-                <h2>Maxsus Test sinovi</h2>
-                <p>4 savol • 30s taymer</p>
-            </div>
-            <button class="btn-start" onclick="alert('Imtihon boshlanmoqda')">Boshlash ▷</button>
-        </div>
-    </div>
-
-    <script>
-        function executeLogin() {
-            var phone = document.getElementById('phone').value.trim();
-            var password = document.getElementById('password').value.trim();
-
-            if (phone === "" || password === "") {
-                alert("Iltimos, telefon raqam va parolni kiriting!");
-                return;
-            }
-
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboardScreen').style.display = 'flex';
-        }
-    </script>
-
-</body>
-</html>
+        .btn-outline {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.6);
+            color: #38bdf8;
+            border: 1px
