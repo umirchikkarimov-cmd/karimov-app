@@ -875,7 +875,7 @@
                 <div class="admin-sub-section" id="adminSubVocabSection">
                     <div class="general-card">
                         <h3>📖 Lug'at yuklash (Essential 1 & 2 - Unitlar)</h3>
-                        <p>Qaysi kitob va unit uchun lug'at kiritmoqchisiz?</p>
+                        <p>Qaysi kitob va unit uchun lug'at kiritmoqchisiz? (Fayl yuklashingiz yoki matn ko'rinishida yozishingiz mumkin)</p>
                         
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <select id="adminUploadBookSelect" class="task-input" onchange="renderAdminUnitList()">
@@ -885,7 +885,7 @@
                         </div>
 
                         <div id="adminUnitUploadContainer" style="margin-top: 14px;">
-                            <!-- Dinamik unitlar va matn kiritish maydonlari -->
+                            <!-- Dinamik unitlar, fayl yuklash va matn kiritish maydonlari -->
                         </div>
                     </div>
                 </div>
@@ -1117,8 +1117,15 @@
                             <b style="color:#f472b6;">Unit ${u}</b>
                             <span>${statusText}</span>
                         </div>
-                        <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="So'zlarni yozing (Har bir qatorda: English - O'zbekcha)&#10;Masalan: Apple - Olma">${existingText}</textarea>
-                        <div style="display:flex; gap:6px; margin-top:6px;">
+                        <div style="margin-bottom: 6px;">
+                            <label style="font-size:10px; color:#8b9bb4; display:block; margin-bottom:3px;">1. Fayl (.txt yoki matnli fayl) yuklash:</label>
+                            <input type="file" id="file_b${bookVal}_u${u}" class="task-input" accept=".txt,.doc,.docx" style="font-size:11px;" onchange="handleFileUpload(${bookVal}, ${u})">
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label style="font-size:10px; color:#8b9bb4; display:block; margin-bottom:3px;">2. Yoki qo'lda kiritish (English - O'zbekcha):</label>
+                            <textarea id="text_b${bookVal}_u${u}" class="task-input" rows="3" placeholder="Masalan: Apple - Olma">${existingText}</textarea>
+                        </div>
+                        <div style="display:flex; gap:6px;">
                             <button class="btn-purple" style="padding:6px 10px; font-size:11px;" onclick="saveUnitWords(${bookVal}, ${u})">Saqlash / Yangilash</button>
                             ${existingData ? `<button class="btn-delete" onclick="deleteUnitWords(${bookVal}, ${u})">O'chirish</button>` : ''}
                         </div>
@@ -1127,10 +1134,22 @@
             }
         }
 
+        function handleFileUpload(bookNum, unitNum) {
+            let fileInput = document.getElementById(`file_b${bookNum}_u${unitNum}`);
+            if(fileInput.files.length === 0) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let content = e.target.result;
+                document.getElementById(`text_b${bookNum}_u${unitNum}`).value = content;
+            };
+            reader.readAsText(fileInput.files[0]);
+        }
+
         function saveUnitWords(bookNum, unitNum) {
             let textVal = document.getElementById(`text_b${bookNum}_u${unitNum}`).value.trim();
             if(!textVal) {
-                alert("Iltimos, so'zlarni kiriting!");
+                alert("Iltimos, so'zlarni kiriting yoki fayl yuklang!");
                 return;
             }
 
