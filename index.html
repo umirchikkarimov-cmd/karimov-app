@@ -630,7 +630,7 @@
             <p>Shaxsiy kabinetga kirish</p>
             
             <div class="form-group">
-                <input type="text" id="phone" placeholder="Login">
+                <input type="text" id="phone" placeholder="Login (masalan: ali, mustafo, odil yoki ukarimov)">
             </div>
             <div class="form-group">
                 <input type="password" id="password" placeholder="Parol">
@@ -1030,11 +1030,11 @@
             "odil": { name: "Odil", pass: "odil2002", xp: 0, learnedWords: {}, unitScores: {}, submissions: {} }
         };
 
-        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v20'));
+        let storedDB = JSON.parse(localStorage.getItem('karimov_students_db_v21'));
         let studentsDB = storedDB ? { ...defaultDB, ...storedDB } : defaultDB;
         saveDB();
 
-        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v20')) || {
+        let customUnitsDB = JSON.parse(localStorage.getItem('karimov_master_units_v21')) || {
             1: { 
                 1: [
                     { en: "afraid", uz: ["qo'rqqan"] }, { en: "agree", uz: ["rozi bo'lmoq"] }, { en: "angry", uz: ["jahli chiqqan"] }, { en: "arrive", uz: ["yetib kelmoq"] },
@@ -1050,7 +1050,7 @@
             2: {}
         };
 
-        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v20')) || [
+        let assignmentsDB = JSON.parse(localStorage.getItem('karimov_assignments_db_v21')) || [
             { id: 1, type: 'writing', content: "Describe your favorite book or movie in English using at least 3 sentences.", date: "11-Noyabr" }
         ];
 
@@ -1066,15 +1066,15 @@
         let correctWordsInCurrentUnitSet = new Set();
 
         function saveDB() {
-            localStorage.setItem('karimov_students_db_v20', JSON.stringify(studentsDB));
+            localStorage.setItem('karimov_students_db_v21', JSON.stringify(studentsDB));
         }
 
         function saveUnitsDB() {
-            localStorage.setItem('karimov_master_units_v20', JSON.stringify(customUnitsDB));
+            localStorage.setItem('karimov_master_units_v21', JSON.stringify(customUnitsDB));
         }
 
         function saveAssignments() {
-            localStorage.setItem('karimov_assignments_db_v20', JSON.stringify(assignmentsDB));
+            localStorage.setItem('karimov_assignments_db_v21', JSON.stringify(assignmentsDB));
             updateTaskBadge();
         }
 
@@ -1251,7 +1251,7 @@
             activeExamBook = bookNum;
             activeExamUnit = unitNum;
 
-            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v20')) || customUnitsDB;
+            let latestMasterDB = JSON.parse(localStorage.getItem('karimov_master_units_v21')) || customUnitsDB;
             let wordsList = (latestMasterDB[bookNum] && latestMasterDB[bookNum][unitNum] && latestMasterDB[bookNum][unitNum].length > 0) 
                 ? latestMasterDB[bookNum][unitNum] 
                 : [{ en: "word", uz: ["so'z"] }];
@@ -1343,7 +1343,7 @@
             }
 
             let st = studentsDB[currentStudentId];
-            if (!st.learnedWords) st.learnedWords. {};
+            if (!st.learnedWords) st.learnedWords = {};
 
             if (isCorrect) {
                 correctInThisSession++;
@@ -1423,7 +1423,6 @@
             let errorsFound = [];
             let warningsFound = [];
 
-            // 1. Katta harf va asosiy imlo qoidalarini tekshirish
             let lowerText = textVal.toLowerCase();
 
             // "I" olmoshi kichik yozilgan bo'lsa
@@ -1435,22 +1434,22 @@
                 }
             });
 
-            // 2. "I am student" kabi artikl tushib qolgan holatlar
+            // "I am student" kabi artikl tushib qolgan holatlar
             if (lowerText.includes("i am student") || lowerText.includes("i'm student")) {
                 errorsFound.push("❌ Grammatik xato: Sanaladigan otlar oldidan noaniqlik artikli ishlatilishi shart (masalan: **'I am a student'**).");
             }
 
-            // 3. Ega-kesim xatolari
+            // Ega-kesim xatolari
             if (lowerText.includes("i are") || lowerText.includes("i is") || lowerText.includes("he am")) {
                 errorsFound.push("❌ Grammatik tuzilish xatosi: Ega va kesim moslashuvida xato bor (masalan: **'I am'** bo'lishi kerak).");
             }
 
-            // 4. Mavzuga moslik (Kitob yoki kino o'rniga rang yozilganini tekshirish)
+            // Mavzuga moslik (Kitob yoki kino o'rniga rang yozilganini tekshirish)
             if (lowerText.includes("colour is") || lowerText.includes("color is") || lowerText.includes("is red") || lowerText.includes("is black")) {
                 warningsFound.push("⚠️ Mavzu va ma'no xatosi: Sevimli kitob yoki kino mavzusida ranglar haqida yozish mos kelmaydi. Kitob yoki kino nomini va uning ta'rifini yozing.");
             }
 
-            // 5. Gaplar soni talabi
+            // Gaplar soni talabi
             if (sentences.length < 3) {
                 warningsFound.push(`⚠️ Hajm bo'yicha ogohlantirish: Mavzuda kamida 3 ta to'liq gap yozish talab etilgan edi (Sizda ${sentences.length} ta gap mavjud).`);
             }
@@ -1507,7 +1506,7 @@
                 return;
             }
 
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v20'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v21'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             if (!studentsDB[loginInput] || studentsDB[loginInput].pass !== passInput) {
@@ -1537,7 +1536,7 @@
         }
 
         function loadAdminTable() {
-            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v20'));
+            let stored = JSON.parse(localStorage.getItem('karimov_students_db_v21'));
             if (stored) studentsDB = { ...defaultDB, ...stored };
 
             let tbody = document.getElementById('adminTableBody');
