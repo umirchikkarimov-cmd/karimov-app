@@ -21,7 +21,7 @@
             align-items: flex-start;
         }
 
-        /* 1-BOSQICH: LOGIN EKRANI */
+        /* LOGIN EKRANI */
         .login-wrapper {
             width: 100%;
             max-width: 400px;
@@ -91,7 +91,7 @@
             margin-top: 10px;
         }
 
-        /* 2-BOSQICH: DASHBOARD */
+        /* DASHBOARD */
         .dashboard-screen {
             display: none;
             width: 100%;
@@ -256,78 +256,6 @@
             cursor: pointer;
         }
 
-        /* PIN Panel */
-        .pin-panel {
-            background: #121526;
-            border: 1px solid #20253e;
-            border-radius: 16px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .pin-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .pin-icon {
-            background: #1d173b;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #c084fc;
-            font-size: 16px;
-        }
-
-        .pin-text h3 {
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .pin-text p {
-            font-size: 10px;
-            color: #64748b;
-            margin-top: 1px;
-        }
-
-        .pin-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #090b16;
-            border: 1px solid #20253e;
-            padding: 4px 6px;
-            border-radius: 10px;
-        }
-
-        .pin-input {
-            width: 65px;
-            background: transparent;
-            border: none;
-            color: #fff;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 600;
-            outline: none;
-        }
-
-        .btn-pin {
-            background: #8b5cf6;
-            color: #fff;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -362,92 +290,81 @@
             font-weight: 600;
         }
 
-        .stat-sub-gray {
-            font-size: 10px;
-            color: #64748b;
-        }
-
-        /* Exam Section Header */
-        .section-header {
-            margin-top: 6px;
-        }
-
-        .section-header h3 {
-            font-size: 14px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .section-header p {
-            font-size: 10px;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        /* Exam Card */
-        .exam-card {
+        /* Yozma Tarjima Topshiriq Paneli (Imtihon o'rnida) */
+        .task-card {
             background: #121526;
             border: 1px solid #20253e;
             border-radius: 16px;
-            padding: 16px;
+            padding: 18px;
+        }
+
+        .task-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 12px;
         }
 
-        .exam-tags {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-
-        .tag {
+        .word-badge {
             background: #3b136b;
             color: #d8b4fe;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 800;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
         }
 
-        .tag-blue {
-            background: #0f3854;
-            color: #38bdf8;
-        }
-
-        .pin-lbl {
-            font-size: 10px;
+        .word-counter {
+            font-size: 11px;
             color: #64748b;
             font-weight: 600;
         }
 
-        .exam-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 4px;
+        .target-word {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 14px;
         }
 
-        .exam-meta {
-            font-size: 11px;
-            color: #64748b;
+        .task-input-group {
+            display: flex;
+            gap: 8px;
         }
 
-        .btn-start {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        .task-input {
+            flex: 1;
+            padding: 11px 14px;
+            background: #090b16;
+            border: 1px solid #232943;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .task-input:focus {
+            border-color: #8b5cf6;
+        }
+
+        .btn-check {
+            background: #8b5cf6;
             color: #fff;
             border: none;
-            padding: 9px 16px;
+            padding: 0 16px;
             border-radius: 10px;
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
         }
 
-        /* Bottom Nav - Ixcham va to'g'ri joylashuv */
+        .task-result {
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -524,8 +441,8 @@
             <div class="brand">
                 <div class="brand-logo">📚</div>
                 <div class="brand-text">
-                    <h1>Topqir English</h1>
-                    <p>Smart Quiz & Learning Platform</p>
+                    <h1>U.Karimov</h1>
+                    <p>Ta'lim Platformasi</p>
                 </div>
             </div>
             <div class="nav-right">
@@ -543,26 +460,11 @@
                     <span class="badge-purple">Kunlik Vazifa</span>
                     <span class="hero-date">10-Noyabr</span>
                 </div>
-                <h2 class="hero-title">Bilimni <span>o'yinga va reytingga</span> aylantiring!</h2>
-                <p class="hero-desc">Bugun 20 ta yangi lug'at yodlang va Anti-Cheat imtihonida o'z bilimlaringizni halol topshirib reytingda 1-o'ringa chiqing!</p>
+                <h2 class="hero-title">Bilimingizni <span>topshiriqlar orqali rivojlantiring!</span></h2>
+                <p class="hero-desc">Bugungi lug'at va topshiriqlarni bajarib, bilim darajangizni oshiring va reytingda yuqoriga ko'tariling!</p>
                 <div class="hero-btns">
                     <button class="btn-purple">📖 O'rganishni Boshlash</button>
-                    <button class="btn-outline">🛡️ Imtihon Topshiriq</button>
-                </div>
-            </div>
-
-            <!-- PIN Panel -->
-            <div class="pin-panel">
-                <div class="pin-left">
-                    <div class="pin-icon">🔑</div>
-                    <div class="pin-text">
-                        <h3>PIN-Kod bilan kirish</h3>
-                        <p>O'qituvchi bergan kodni kiriting</p>
-                    </div>
-                </div>
-                <div class="pin-right">
-                    <input type="text" class="pin-input" value="849201">
-                    <button class="btn-pin">Kirish</button>
+                    <button class="btn-outline">📝 Topshiriq bajarish</button>
                 </div>
             </div>
 
@@ -570,44 +472,28 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">O'RGANILGAN SO'ZLAR</div>
-                    <div class="stat-value">184 ta</div>
-                    <div class="stat-sub">↗ +12 ta bu hafta</div>
+                    <div class="stat-value" id="learnedWordsCount">184 ta</div>
+                    <div class="stat-sub">↗ To'g'ri ishlanganlar asosida</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-title">HALOLLIK KO'RSATKICHI</div>
+                    <div class="stat-title">BILIM KO'RSATKICHINGIZ</div>
                     <div class="stat-value">98%</div>
-                    <div class="stat-sub-gray">0 ta cheat holati</div>
+                    <div class="stat-sub" style="color: #38bdf8;">Faol o'quvchi</div>
                 </div>
             </div>
 
-            <!-- Exam Section -->
-            <div class="section-header">
-                <h3>🛡️ Xavfsiz Imtihonlar</h3>
-                <p>Oyna o'zgartirish va copy-paste taqiqlangan</p>
-            </div>
-
-            <div class="exam-card">
-                <div>
-                    <div class="exam-tags">
-                        <span class="tag">VOCABULARY</span>
-                        <span class="pin-lbl">PIN: 849201</span>
-                    </div>
-                    <div class="exam-title">IELTS Band 7+ Words</div>
-                    <div class="exam-meta">5 savol • 25s taymer</div>
+            <!-- Yozma Tarjima Topshiriq Bo'limi -->
+            <div class="task-card">
+                <div class="task-header">
+                    <span class="word-badge">TARJIMA TOPShIRIG'I</span>
+                    <span class="word-counter" id="wordProgress">1 / 3 so'z</span>
                 </div>
-                <button class="btn-start">Boshlash ▷</button>
-            </div>
-
-            <div class="exam-card">
-                <div>
-                    <div class="exam-tags">
-                        <span class="tag tag-blue">GRAMMAR</span>
-                        <span class="pin-lbl">PIN: 182938</span>
-                    </div>
-                    <div class="exam-title">Essential Grammar Challenge</div>
-                    <div class="exam-meta">4 savol • 30s taymer</div>
+                <div class="target-word" id="currentEnglishWord">Education</div>
+                <div class="task-input-group">
+                    <input type="text" class="task-input" id="userTranslation" placeholder="O'zbekcha tarjimasini yozing...">
+                    <button class="btn-check" onclick="checkTranslation()">Tekshirish</button>
                 </div>
-                <button class="btn-start">Boshlash ▷</button>
+                <div class="task-result" id="taskResultMsg"></div>
             </div>
 
         </div>
@@ -623,8 +509,8 @@
                 <span>O'rganish</span>
             </a>
             <a href="#" class="nav-item active">
-                <div class="active-icon">🛡️</div>
-                <span>Imtihon</span>
+                <div class="active-icon">📝</div>
+                <span>Topshiriq</span>
             </a>
             <a href="#" class="nav-item">
                 <span class="nav-icon">📊</span>
@@ -639,6 +525,16 @@
     </div>
 
     <script>
+        // Lug'at topshiriqlari ro'yxati (Inglizcha va uning to'g'ri tarjimalari)
+        const vocabularyList = [
+            { en: "Education", uz: ["ta'lim", "talim", "o'qitish"] },
+            { en: "Knowledge", uz: ["bilim"] },
+            { en: "Success", uz: ["muvaffaqiyat", "omad"] }
+        ];
+
+        let currentIndex = 0;
+        let learnedCount = 184;
+
         function executeLogin() {
             var phone = document.getElementById('phone').value.trim();
             var password = document.getElementById('password').value.trim();
@@ -651,8 +547,39 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboardScreen').style.display = 'flex';
             window.scrollTo(0, 0);
+            loadWord();
         }
-    </script>
 
-</body>
-</html>
+        function loadWord() {
+            if (currentIndex < vocabularyList.length) {
+                document.getElementById('currentEnglishWord').innerText = vocabularyList[currentIndex].en;
+                document.getElementById('wordProgress').innerText = (currentIndex + 1) + " / " + vocabularyList.length + " so'z";
+                document.getElementById('userTranslation').value = "";
+                document.getElementById('taskResultMsg').innerText = "";
+            } else {
+                document.getElementById('currentEnglishWord').innerText = "Tabriklaymiz!";
+                document.getElementById('taskResultMsg').innerText = "Barcha topshiriqlarni muvaffaqiyatli yakunladingiz!";
+                document.getElementById('taskResultMsg').style.color = "#34d399";
+            }
+        }
+
+        function checkTranslation() {
+            if (currentIndex >= vocabularyList.length) return;
+
+            let userVal = document.getElementById('userTranslation').value.trim().toLowerCase();
+            let validAnswers = vocabularyList[currentIndex].uz;
+            let msgEl = document.getElementById('taskResultMsg');
+
+            if (userVal === "") {
+                alert("Iltimos, tarjimani yozing!");
+                return;
+            }
+
+            // Tekshirish
+            let isCorrect = validAnswers.includes(userVal);
+
+            if (isCorrect) {
+                msgEl.innerText = "✅ To'g'ri! Barakalla.";
+                msgEl.style.color = "#34d399";
+                learnedCount++;
+                document.getElementById('learnedWordsCount').innerText = learnedCount + " ta";
